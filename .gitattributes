@@ -1,0 +1,19 @@
+# Auto detect text files and normalize line endings to LF
+* text=auto
+
+# Minecraft datapack files - always use LF
+*.mcfunction text eol=lf
+*.json text eol=lf
+*.mcmeta text eol=lf
+*.md text eol=lf
+
+# Images - binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+
+# Archives - binary
+*.zip binary
+*.rar binary
+*.jar binary
