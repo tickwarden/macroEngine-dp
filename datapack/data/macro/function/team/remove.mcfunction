@@ -7,4 +7,4 @@
 # ============================================
 
 $team leave $(player)
-tellraw @a[tag=macro.debug] [{"text":"[Team] ","color":"gray"},{"text":"$(player)","color":"white"},{"text":" takımdan çıktı.","color":"gray"}]
+$tellraw @a[tag=macro.debug] [{"text":"[Team] ","color":"gray"},{"text":"$(player)","color":"white"},{"text":" takımdan çıktı.","color":"gray"}]

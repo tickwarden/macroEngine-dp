@@ -11,4 +11,4 @@
 
 $team add $(team)
 $data modify storage macro:engine teams.$(team) set value {color:"white",friendly_fire:1b,see_friendly_invisibles:0b}
-tellraw @a[tag=macro.debug] [{"text":"[Team] Oluşturuldu: ","color":"aqua"},{"text":"$(team)","color":"white"}]
+$tellraw @a[tag=macro.debug] [{"text":"[Team] Oluşturuldu: ","color":"aqua"},{"text":"$(team)","color":"white"}]
