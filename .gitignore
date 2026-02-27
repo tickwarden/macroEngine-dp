@@ -81,7 +81,6 @@ command_history.txt.bak
 backup*.zip
 backup*.rar
 !datapacks/*.zip
-!data/custom_admin/function/util/debug
 
 # Other
 *.rar
