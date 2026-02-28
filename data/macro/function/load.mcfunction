@@ -27,6 +27,8 @@ scoreboard objectives add macro_menu trigger
 scoreboard objectives add macro_run trigger
 
 # ─── Sayaçları başlat ────────────────────────────────────
+# Auto-HUD modulo sabiti
+scoreboard players set $pb_four macro.tmp 4
 # BUG FIX v3.0: $epoch macro.time /reload'da SIFIRLANMAZ.
 # Yalnızca hiç var olmamışsa (ilk yüklemede) sıfırlanır;
 # böylece cooldown'lar sunucu yeniden başlatmadan korunur.

@@ -12,4 +12,4 @@
 #   function macro:cmd/msg with storage macro:input {}
 # ============================================
 
-$tellraw $(player) {"text":"$(message)","color":"gray","italic":true}
+$tellraw @a[name=$(player),limit=1] {"text":"$(message)","color":"gray","italic":true}

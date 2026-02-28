@@ -16,4 +16,4 @@ $execute if data storage macro:engine config.$(key) run return 0
 
 # Yoksa yaz
 $data modify storage macro:engine config.$(key) set value "$(value)"
-tellraw @a[tag=macro.debug] [{"text":"[Config] Varsayilan: ","color":"yellow"},{"text":"$(key)","color":"white"},{"text":" = "},{"text":"$(value)","color":"gray"}]
+$tellraw @a[tag=macro.debug] [{"text":"[Config] Varsayilan: ","color":"yellow"},{"text":"$(key)","color":"white"},{"text":" = "},{"text":"$(value)","color":"gray"}]

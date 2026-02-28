@@ -31,9 +31,7 @@ scoreboard players set @a[scores={macro_run=1..}] macro_run 0
 scoreboard players enable @a[scores={macro_run=-1..}] macro_run
 
 # ── Auto-HUD: her 4 tick'te bir, pb_obj varsa progress_bar_self çalıştır ──
-execute if data storage macro:engine pb_obj run execute if score $epoch macro.time matches 0 run scoreboard players set $pb_phase macro.tmp 0
-execute if data storage macro:engine pb_obj run scoreboard players add $pb_phase macro.tmp 1
-execute if data storage macro:engine pb_obj run execute if score $pb_phase macro.tmp matches 4.. run scoreboard players set $pb_phase macro.tmp 0
-execute if data storage macro:engine pb_obj run execute if score $pb_phase macro.tmp matches 0 run execute as @a run function macro:string/progress_bar_self with storage macro:engine {}
-
-execute as @a at @s run function macro:string/progress_bar with storage macro:input {}
+# $epoch % 4 = 0 olan tick'lerde tetiklenir — ayrı sayaç yok, sıfırlama hatası yok
+execute if data storage macro:engine pb_obj run scoreboard players operation $pb_mod macro.tmp = $epoch macro.time
+execute if data storage macro:engine pb_obj run scoreboard players operation $pb_mod macro.tmp %= $pb_four macro.tmp
+execute if data storage macro:engine pb_obj run execute if score $pb_mod macro.tmp matches 0 run execute as @a run function macro:string/progress_bar_self with storage macro:engine {}
