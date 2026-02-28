@@ -1,0 +1,86 @@
+{
+  "pack": {
+    "pack_format": 48,
+    "description": [
+      {
+        "text": "A.M.E.",
+        "extra": [
+          {
+            "text": " | ",
+            "color": "#ff0000",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "by tickwarden",
+            "extra": [
+              " ",
+              {
+                "text": "| ",
+                "color": "#ff0000",
+                "bold": false,
+                "italic": false,
+                "underlined": false,
+                "strikethrough": false,
+                "obfuscated": false
+              },
+              {
+                "text": "1.21.x",
+                "color": "#e3ff57",
+                "bold": false,
+                "italic": false,
+                "underlined": true
+              }
+            ],
+            "color": "#00ff33",
+            "bold": false,
+            "italic": false
+          }
+        ],
+        "color": "#00ccff",
+        "bold": true,
+        "italic": false
+      },
+      {
+        "text": " | v1.0.0",
+        "color": "#ffaa00",
+        "bold": false,
+        "italic": false
+      }
+    ],
+    "supported_formats": [
+      48,
+      94
+    ],
+    "min_format": 48,
+    "max_format": 94
+  },
+  "filter": {
+    "block": [
+      {
+        "namespace": "macro",
+        "path": ".*\\\\.(txt|log|bak|tmp|js|tsx|sh|c|css|exe|jar|zip|apk|cmd|bat|py)$"
+      },
+      {
+        "namespace": "minecraft",
+        "path": ".*\\.(txt|log|bak|tmp|js|tsx|sh|c|css|exe|jar|zip|apk|cmd|bat|py)$"
+      }
+    ]
+  },
+  "overlays": {
+    "entries": [
+      {
+        "directory": "-1_21_4",
+        "formats": {
+          "min_inclusive": 48,
+          "max_inclusive": 61
+        },
+        "min_format": 48,
+        "max_format": 61
+      }
+    ]
+  }
+}

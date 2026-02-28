@@ -1,10 +1,10 @@
 # ============================================
-# macro:load — Advanced Macro Engine v3.4
+# macro:load — Advanced Macro Engine v1.0.0
 # ============================================
 # /reload veya sunucu başlangıcında otomatik çalışır.
 # Scoreboard, storage ve schedule başlatır.
 #
-# v3.4 değişiklikleri:
+# v1.0.0 değişiklikleri:
 #   + flag/ ve state/ modülleri için storage başlatma
 #   + math/random tohum iyileştirmesi (BUG FIX)
 #   + event/unregister_one eklendi
@@ -65,7 +65,7 @@ scoreboard players enable @a[tag=macro.admin] macro_run
 data modify storage macro:engine global.loaded set value 1b
 
 # ─── Yükleme mesajı ──────────────────────────────────────
-tellraw @a[tag=macro.debug] {"text":"[Macro Engine v3.4] Yüklendi.","color":"green"}
+tellraw @a[tag=macro.debug] {"text":"[Macro Engine v1.0.0] Yüklendi.","color":"green"}
 # BUG FIX v3.5: Makro fonksiyonu "function <name> {nbt}" sözdizimi ile
 # çağrılamaz — "with storage" kullanılmak zorundadır.
 # Ayrıca pitch:0 (duyulamaz ses) → pitch:1 (normal perde) düzeltildi.
