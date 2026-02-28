@@ -9,25 +9,32 @@
 # Minecraft Datapack – Force LF
 # ============================================
 *.mcfunction text eol=lf
-*.json       text eol=lf
-*.mcmeta     text eol=lf
+*.json       text eol=lf diff=json
+*.mcmeta     text eol=lf diff=json
+*.snbt       text eol=lf
 *.md         text eol=lf
 *.txt        text eol=lf
 *.nbt        binary
 
-# Tags & advancements safety
-*.advancement json text eol=lf
-*.recipe      json text eol=lf
-*.loot_table  json text eol=lf
-*.predicate   json text eol=lf
+# ============================================
+# Shader Files (Resource Pack uyumluluğu)
+# ============================================
+*.glsl  text eol=lf
+*.vsh   text eol=lf
+*.fsh   text eol=lf
+*.vert  text eol=lf
+*.frag  text eol=lf
 
 # ============================================
 # Config & Build Files
 # ============================================
-*.yml   text eol=lf
-*.yaml  text eol=lf
-*.toml  text eol=lf
+*.yml        text eol=lf
+*.yaml       text eol=lf
+*.toml       text eol=lf
 *.properties text eol=lf
+*.env        text eol=lf
+.gitignore   text eol=lf
+.gitattributes text eol=lf
 
 # ============================================
 # Windows-specific (optional)
@@ -39,26 +46,58 @@
 # ============================================
 # Binary Assets
 # ============================================
-*.png   binary
-*.jpg   binary
-*.jpeg  binary
-*.gif   binary
-*.webp  binary
-*.ico   binary
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.webp   binary
+*.ico    binary
+*.bmp    binary
+*.tga    binary
+*.tiff   binary
+
+# ============================================
+# Audio & Video
+# ============================================
+*.ogg    binary
+*.mp3    binary
+*.wav    binary
+*.flac   binary
+*.mp4    binary
+
+# ============================================
+# 3D / Font Assets
+# ============================================
+*.obj    binary
+*.mtl    binary
+*.ttf    binary
+*.otf    binary
 
 # ============================================
 # Archives & Compiled
 # ============================================
-*.zip   binary
-*.rar   binary
-*.7z    binary
-*.jar   binary
-*.exe   binary
-*.dll   binary
-*.so    binary
-*.class binary
+*.zip     binary
+*.rar     binary
+*.7z      binary
+*.tar     binary
+*.gz      binary
+*.jar     binary
+*.exe     binary
+*.dll     binary
+*.so      binary
+*.class   binary
+*.mcpack  binary
+*.mcworld binary
 
 # ============================================
-# Prevent accidental merge corruption
+# Lock files – text, diffable
 # ============================================
-*.lock  binary
+*.lock text eol=lf
+
+# ============================================
+# Git diff drivers
+# ============================================
+# Kullanım: git config diff.json.textconv "python3 -m json.tool"
+# veya    : git config diff.json.textconv "jq ."
+[diff "json"]
+    textconv = cat
