@@ -39,7 +39,7 @@ scoreboard players set $tick macro.tmp 0
 scoreboard players set $pq_depth macro.tmp 0
 
 # ─── Global storage başlat ───────────────────────────────
-data modify storage macro:engine global set value {version:"1.0.1"}
+data modify storage macro:engine global set value {version:"1.0.0"}
 
 # ─── Throttle durumunu başlat (yoksa) ────────────────────
 execute unless data storage macro:engine throttle run data modify storage macro:engine throttle set value {}

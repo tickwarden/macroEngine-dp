@@ -1,25 +1,76 @@
 # Advanced Macro Engine — Changelog
 
-## v3.4
+---
 
-### 🐛 Bug Fixes & İyileştirmeler
-- **load/warn**: Sunucu başlarken oyuncu yoksa `macro:load` direkt çalışır, gereksiz dialog satırına geçmez (`return run` ile)
-- **load/warn**: `@p` yerine `@a` — tüm çevrimiçi oyunculara uyarı gösterilir
+## v1.0.0
 
-### ✨ Yeni: `load/warn.mcfunction`
-Sunucu yüklenirken deneysel özellikler hakkında oyuncuları bilgilendiren onay dialogu.
-- Oyuncu yoksa: `macro:load` direkt çalışır
-- Oyuncu varsa: "Çıkış Yap" veya "Devam Et" seçenekli dialog gösterilir
+### 🐛 Bug Fixes
 
-### 🔧 Versiyon Tutarlılığı
-- `load.mcfunction`, `pack.mcmeta` ve storage versiyonları `v3.4` ile eşleştirildi
+- **load/warn**: `yes`/`no` buton etiketleri ve aksiyonları ters yazılmıştı — düzeltildi.
+- **load/warn**: Dialog `run_command` aksiyonundan `/kick` çalışmıyor, `/dialog clear @s` onay istiyor. "Çıkış Yap" butonu `/skin search ea7` kullanır — sunucudan atan tek oyuncu-taraflı geçici çözüm.
+- **load/warn**: CRLF satır sonları → LF'e dönüştürüldü.
+- **load**: `function macro:cmd/sound_all {…}` sözdizimi geçersiz — `with storage macro:input {}` olarak düzeltildi. `pitch:0` (duyulamaz) → `pitch:1` olarak düzeltildi.
+- **cmd/ride**, **cmd/ride_dismount**: `$ride $(player)` → `$ride @a[name=$(player),limit=1]` — selector tutarlılığı sağlandı.
+- **cmd/spectate**, **cmd/spectate_stop**: `execute as $(player)` → `execute as @a[name=$(player),limit=1]` — selector tutarlılığı sağlandı.
+
+### ✨ Yeni: Auto-HUD
+
+`tick.mcfunction` artık `pb_obj` storage'da ayarlıysa `progress_bar_self`'i her 4 tick'te otomatik çalıştırır. Elle komut yazmak gerekmez.
+
+```mcfunction
+data modify storage macro:engine pb_obj   set value "health"
+data modify storage macro:engine pb_max   set value 20
+data modify storage macro:engine pb_label set value "Can"
+# Kapatmak: data remove storage macro:engine pb_obj
+```
+
+### ✨ Yeni: `string/progress_bar` — Tam Yeniden Yazım
+
+- `title $(player) actionbar` geçersiz sözdizimi → `title @a[name=$(player),limit=1] actionbar`
+- `$pb_cur/$pb_max/$pb_ten` → `$pb1_seg/$pb1_max/$pb1_ten` — `progress_bar_self` ile scoreboard çakışması giderildi
+- `progress_bar_self`: `$pb_cur/$pb_max/$pb_ten` → `$pbs_seg/$pbs_max/$pbs_ten`
+- Hizalama amaçlı çift boşluklar temizlendi
 
 ---
 
-## v3.3 (Geliştirme)
+### 🔁 v3.5 (iç)
 
-### 📦 Yeni: `data/macro/damage_type/`
-Özel hasar tipi JSON'ları. `macro:cmd/damage_typed` ile kullanılır.
+### 🐛 Bug Fixes
+
+- **load/warn**: CRLF satır sonları LF'e dönüştürüldü.
+- **load/warn**: `yes`/`no` butonlar ters eşleştirilmişti — düzeltildi.
+- **load/warn**: `/skin search ea7` korundu — `/kick` dialog aksiyonundan çalışmıyor, `/dialog clear @s` onay istiyor; sunucudan atan tek oyuncu-taraflı geçici çözüm.
+- **load**: `function macro:cmd/sound_all {…}` → `with storage macro:input {}` sözdizimi düzeltildi.
+- **cmd/ride**, **cmd/ride_dismount**, **cmd/spectate**, **cmd/spectate_stop**: Raw isim enjeksiyonu → `@a[name=…,limit=1]` selector ile değiştirildi.
+
+---
+
+### v3.4
+
+### 🐛 Bug Fixes
+
+- **load/warn**: Oyuncu yoksa `macro:load` direkt çalışır (`return run` guard).
+- **load/warn**: `@p` → `@a` — tüm çevrimiçi oyunculara uyarı gösterilir.
+
+### ✨ Yeni
+
+- `load/warn.mcfunction`: Sunucu yüklenirken deneysel özellikler hakkında onay dialogu.
+- `event/unregister_one`, `event/has`, `event/count`, `event/clear_context`, `event/fire_queued`
+- `lib/queue_clear`, `lib/schedule_list`, `lib/schedule_reset`
+- `math/map`, `math/wrap`, `math/log2`, `math/mod`
+- `flag/set`, `flag/unset`, `flag/get`, `flag/toggle`, `flag/list`
+- `state/set`, `state/get`, `state/is`, `state/clear`, `state/clear_all`, `state/list`
+- `cmd/msg`, `cmd/msg_raw`, `cmd/clone`, `cmd/clone_masked`
+- `cmd/ride`, `cmd/ride_dismount`, `cmd/forceload_add`, `cmd/forceload_remove`
+- `cmd/trigger_set`, `cmd/spectate`, `cmd/spectate_stop`
+- `cmd/place_feature`, `cmd/place_structure`
+- Versiyon tutarlılığı: `load.mcfunction`, `pack.mcmeta`, storage versiyonları `v3.4` ile eşleştirildi.
+
+---
+
+### v3.3
+
+### ✨ Yeni: `data/macro/damage_type/`
 
 | Dosya | `message_id` | Efekt | Scaling |
 |---|---|---|---|
@@ -29,125 +80,127 @@ Sunucu yüklenirken deneysel özellikler hakkında oyuncuları bilgilendiren ona
 | `macro:fire_custom` | inFire | burning | when_caused_by_living_non_player |
 | `macro:wither_custom` | wither | wither | never |
 
-### 📦 Yeni: `data/macro/item_modifier/`
-Hazır item modifier JSON'ları. `macro:cmd/item_modify` ile uygulanır.
+### ✨ Yeni: `data/macro/item_modifier/`
 
-| Dosya | Etki |
-|---|---|
-| `repair_full` | Hasarı sıfırla (tam tamir) |
-| `damage_random` | Rastgele hasar uygula |
-| `enchant_randomly` | Rastgele büyü ekle (`#on_random_loot`) |
-| `enchant_with_levels_5` | 5 seviye büyü ekle |
-| `enchant_with_levels_30` | 30 seviye büyü ekle |
-| `set_count_1` / `set_count_64` | Miktar ayarla |
-| `lore_add_custom` | Lore satırı ekle (append) |
-| `lore_clear` | Tüm lore'u sil |
-| `glint_add` / `glint_remove` | Büyü parlaması aç/kapat |
-| `unbreakable` | Kırılmaz yap |
-| `hide_tooltip` | Tooltip'i gizle |
-| `rename_to_custom` | "Custom Item" olarak yeniden adlandır (şablon) |
+`repair_full`, `damage_random`, `enchant_randomly`, `enchant_with_levels_5`, `enchant_with_levels_30`, `set_count_1`, `set_count_64`, `lore_add_custom`, `lore_clear`, `glint_add`, `glint_remove`, `unbreakable`, `hide_tooltip`, `rename_to_custom`
 
-### 📦 Yeni: `data/macro/loot_table/`
-Hazır loot table şablonları. `macro:cmd/loot_give` ve `macro:cmd/loot_drop` ile kullanılır.
+### ✨ Yeni: `data/macro/loot_table/`
 
-| Dosya | Açıklama |
-|---|---|
-| `util/empty` | Hiçbir şey düşürme |
-| `util/xp_only` | Sadece XP (item yok) |
-| `template/single_item` | Tek item — düzenlenebilir şablon |
-| `template/weighted_pool` | Ağırlıklı rastgele havuz şablonu |
-| `template/conditional_drop` | Yalnızca oyuncu vuruşunda düşür |
-| `template/bonus_per_looting` | Looting büyüsüne göre ekstra drop |
+`util/empty`, `util/xp_only`, `template/single_item`, `template/weighted_pool`, `template/conditional_drop`, `template/bonus_per_looting`
 
-### 📦 Yeni: `data/macro/advancement/`
-Kolayca kopyalanıp özelleştirilebilen advancement şablonları.
+### ✨ Yeni: `data/macro/advancement/`
 
-| Dosya | Frame | Toast | Sohbet | XP Ödülü |
-|---|---|---|---|---|
-| `hidden/root` | task | ✗ | ✗ | — |
-| `template/task` | task | ✓ | ✗ | — |
-| `template/goal` | goal | ✓ | ✓ | — |
-| `template/challenge` | challenge | ✓ | ✓ | 100 |
+`hidden/root`, `template/task`, `template/goal`, `template/challenge`
 
-### ✨ Yeni: `predicate/` Genişlemesi
-Mevcut predicate setine eklenenler:
+### ✨ Yeni: Predicate Genişlemesi
 
-`is_flying`, `is_gliding`, `is_in_water`, `is_baby`, `is_hungry`,  
-`is_holding_sword`, `is_holding_bow`, `is_holding_trident`,  
-`has_empty_offhand`, `weather_clear`, `health_below_half`
+`is_flying`, `is_gliding`, `is_in_water`, `is_baby`, `is_hungry`, `is_holding_sword`, `is_holding_bow`, `is_holding_trident`, `has_empty_offhand`, `weather_clear`, `health_below_half`
 
 ### ✨ Yeni: `cmd/` Fonksiyonları
-| Fonksiyon | Açıklama |
-|---|---|
-| `cmd/attribute_add_modifier` | Attribute modifier ekle (add_value / multiplied) |
-| `cmd/attribute_remove_modifier` | Attribute modifier kaldır (id ile) |
-| `cmd/attribute_get_modifier` | Belirli modifier değerini oku |
-| `cmd/damage_typed` | Özel `damage_type` ile hasar ver |
-| `cmd/item_modify` | Slot'a item_modifier uygula |
-| `cmd/item_rename` | Slot'a rename modifier uygula |
-| `cmd/loot_drop` | Koordinata loot table'dan item düşür |
-| `cmd/loot_give` | Oyuncuya loot table içeriğini ver |
-| `cmd/advancement_grant` | Oyuncuya advancement ver |
-| `cmd/advancement_revoke` | Oyuncudan advancement al |
-| `cmd/advancement_check` | Advancement var mı kontrol et → `1b/0b` |
+
+`cmd/attribute_add_modifier`, `cmd/attribute_remove_modifier`, `cmd/attribute_get_modifier`, `cmd/damage_typed`, `cmd/item_modify`, `cmd/item_rename`, `cmd/loot_drop`, `cmd/loot_give`, `cmd/advancement_grant`, `cmd/advancement_revoke`, `cmd/advancement_check`
 
 ### ✨ Yeni: `string/` Fonksiyonları
-| Fonksiyon | Açıklama |
-|---|---|
-| `string/hover_text` | Hover'da açıklama gösteren tellraw |
-| `string/click_run` | Tıklanınca komut çalıştıran buton |
-| `string/click_suggest` | Tıklanınca sohbete metin öneren buton |
-| `string/link` | Tıklanınca URL açan bağlantı metni |
-| `string/copy_to_clipboard` | Tıklanınca panoya kopyalayan buton |
-| `string/announce_prefix` | `[PREFIX] mesaj` formatında duyuru |
-| `string/tooltip_item` | Hover'da item tooltip gösteren metin |
+
+`string/hover_text`, `string/click_run`, `string/click_suggest`, `string/link`, `string/copy_to_clipboard`, `string/announce_prefix`, `string/tooltip_item`
 
 ---
 
-## v3.2
+### v3.2
 
 ### 🐛 Bug Fixes
-- **math/random**: `$epoch=0` durumunda LCG tohumunun zayıf kalması giderildi. 57005 (0xDEAD) sabit ofseti eklendi.
 
-### ✨ Yeni: Event Sistemi
-`event/unregister_one`, `event/has`, `event/count`, `event/clear_context`, `event/fire_queued`
+- **math/random**: `$epoch=0` durumunda LCG tohumunun zayıf kalması giderildi — 57005 (0xDEAD) sabit ofseti eklendi. `tick*31` entropi eklendi.
+- **math/log2**: `log2(2)=0` dönüyordu (doğrusu 1) — döngü sırası düzeltildi.
 
-### ✨ Yeni: Queue / Zamanlama
-`lib/queue_clear`, `lib/schedule_list`, `lib/schedule_reset`
+### ✨ Yeni
 
-### ✨ Yeni: Matematik Kütüphanesi
-`math/map`, `math/wrap`, `math/log2`, `math/mod`
-
-### ✨ Yeni Modül: `flag/`
-`flag/set`, `flag/unset`, `flag/get`, `flag/toggle`, `flag/list`
-
-### ✨ Yeni Modül: `state/`
-`state/set`, `state/get`, `state/is`, `state/clear`, `state/clear_all`, `state/list`
-
-### ✨ Yeni: cmd/ Komutları
-`cmd/msg`, `cmd/msg_raw`, `cmd/clone`, `cmd/clone_masked`, `cmd/ride`, `cmd/ride_dismount`,
-`cmd/forceload_add`, `cmd/forceload_remove`, `cmd/trigger_set`, `cmd/spectate`, `cmd/spectate_stop`,
-`cmd/place_feature`, `cmd/place_structure`
+- `event/fire_queued`: Gecikmeli event tetikleme — `_fdeferred` race condition giderildi, event adı doğrudan queue item'a gömülür.
+- `lib/queue_clear`, `lib/schedule_list`, `lib/schedule_reset`
+- `math/map`, `math/wrap`, `math/log2`, `math/mod`
+- `flag/`, `state/` modülleri (ilk sürüm)
+- `cmd/msg`, `cmd/msg_raw`, `cmd/clone`, `cmd/clone_masked`, `cmd/ride`, `cmd/ride_dismount`, `cmd/forceload_add`, `cmd/forceload_remove`, `cmd/trigger_set`, `cmd/spectate`, `cmd/spectate_stop`, `cmd/place_feature`, `cmd/place_structure`
 
 ---
 
-## v3.1
+### v3.1
 
 ### 🐛 Bug Fixes
+
 - **lib/schedule**: Aynı key ile tekrar çağrılınca queue'ya duplicate giriş eklenmesi giderildi.
+- **lib/input_push/pop**: Tüm `cmd/` alanları dahil edildi (ses, parçacık, entity, başlık, efekt, bossbar, gamerule, tp).
 
 ---
 
-## v3.0
+### v3.0
 
 ### 🐛 Bug Fixes
-- **load**: `$epoch macro.time` artık `/reload`'da sıfırlanmıyor.
-- **lib/process_queue**: `$pq_depth` ile tick başına 256 özyineleme limiti eklendi.
-- **debug/example_events**: `event_context` path düzeltildi.
+
+- **load**: `$epoch macro.time` artık `/reload`'da sıfırlanmıyor — `unless score … matches -2147483648..2147483647` guard'ı ile yalnızca ilk yüklemede sıfırlanır.
+- **lib/process_queue**: `$pq_depth` ile tick başına 256 özyineleme limiti — stack overflow engeli.
+- **tick**: Her tick'te `$pq_depth` sıfırlanıyor.
+- **debug/example_events**: `event_context set value {}` geçersizdi — `data remove` + tek tek `data modify` ile düzeltildi. `event_context$(player)` → `event_context.player` nokta düzeltildi.
+- **version**: Tüm referanslar v3.0 olarak eşleştirildi.
+
+### ✨ Yeni Modüller
+
+| Modül | Fonksiyonlar |
+|---|---|
+| `math/` | `sign`, `abs`, `clamp`, `lerp`, `sqrt`, `ceil_div`, `distance2d`, `pow`, `min`, `max` + `internal/sqrt_step`, `internal/pow_loop` |
+| `team/` | `create`, `delete`, `add`, `remove`, `has`, `set_color`, `set_friendly_fire`, `count`, `list` |
+| `config/` | `set`, `set_int`, `set_default`, `get`, `has`, `delete`, `list`, `reset` |
+| `lib/` | `input_push`, `input_pop`, `for_each_list`, `throttle`, `debounce`, `schedule_renew` |
 
 ---
 
-## v2.5
+### v2.5
 
 ### 🐛 Bug Fixes
+
 - **lib/process_queue**: Aynı tick'te birden fazla `delay=0` item varsa hepsi işleniyor.
+- **player/increment**, **player/decrement**: `macro:input.amount` artık kirletilmiyor — doğrudan scoreboard ile ekleme/çıkarma yapılıyor.
+
+---
+
+### v2.4
+
+### 🐛 Bug Fixes
+
+| Bug | Dosya | Düzeltme |
+|---|---|---|
+| **KRİTİK**: Cooldown'lar hiç dolmuyordu | `cooldown/set`, `check`, `remaining` | `$tick macro.tmp` (0–20 arası sıfırlanan) → `$epoch macro.time` (mutlak, sıfırlanmaz) |
+| `macro.time` objective eksikti | `load`, `tick` | `$epoch macro.time` her tick +1, `/reload`'da sıfırlanmaz |
+| `progress_bar` görsel blok yerine ham sayı gösteriyordu | `string/progress_bar` | 11'li `█░` lookup tablosu |
+| `fire_next` NBT predicate yanlıştı | `event/internal/fire_next` | `{event_queue:[{}]}` → `event_queue[0]` path kontrolü |
+| `distance2d` caller input'u bozuyordu | `math/distance2d` | sqrt inline çalışıyor, `macro:input` kirlenmiyor |
+| `ceil_div`'de `$cd_1` cooldown prefix'iyle çakışıyordu | `math/ceil_div` | `$cd_1` → `$cdv_1`, `$a/$b` → `$cdv_a/$cdv_b` |
+| `sync_tick` global epoch'u storage'a yazmıyordu | `lib/sync_tick` | `global.epoch` de sync ediliyor |
+
+---
+
+### v2.3
+
+### ✨ Yeni Modüller ve Fonksiyonlar
+
+| Modül | Eklenenler |
+|---|---|
+| `cooldown/` | `set`, `check`, `remaining`, `clear`, `clear_all` |
+| `event/` | `register`, `fire`, `unregister`, `list` + `internal/fire_next` |
+| `lib/` | `for_each_player`, `for_each_player_at`, `repeat`, `wait` |
+| `math/` | `sign`, `lerp`, `sqrt`, `ceil_div`, `distance2d` |
+| `cmd/` | `kill`, `damage`, `heal`, `particle`, `clear`, `clear_item`, `tag_add`, `tag_remove`, `scoreboard_set`, `scoreboard_get`, `scoreboard_add`, `title_times`, `title_reset`, `title_clear` |
+| `string/` | `progress_bar`, `announce`, `announce_prefix` |
+| `player/` | `reset`, `list_vars`, `add_default`, `increment`, `decrement` |
+
+---
+
+### v2.2
+
+### 🐛 Bug Fixes
+
+| Bug | Düzeltme |
+|---|---|
+| `load`: `data remove storage macro:input {}` geçersiz | `data modify … set value {}` |
+| `cmd/title_sub`: subtitle rengi hardcoded `"gray"` | `"color":"$(color)"` ile dinamik |
+| `cmd/as_player` vb.: `val` parametresi tutarsızlığı | `val` → `func` |
+| `debug/show_all`: `nbt:""` boş path geçersiz | Bölümlere ayrıldı |
