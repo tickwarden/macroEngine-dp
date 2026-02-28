@@ -69,5 +69,18 @@
         "path": ".*\\.(txt|log|bak|tmp|js|tsx|sh|c|css|exe|jar|zip|apk|cmd|bat|py)$"
       }
     ]
+  },
+  "overlays": {
+    "entries": [
+      {
+        "directory": "-1_21_4",
+        "formats": {
+          "min_inclusive": 48,
+          "max_inclusive": 61
+        },
+        "min_format": 48,
+        "max_format": 61
+      }
+    ]
   }
 }
