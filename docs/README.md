@@ -463,4 +463,4 @@ function macro:lib/input_pop           # input'u geri yükle
 ```
 
 
-*Advanced Macro Engine v3.0 | MC Java 1.21.x | +3 yeni modül | +24 yeni fonksiyon | 3 kritik bug fix*
+*Advanced Macro Engine v3.0 | MC Java 1.21.x | +3 yeni modül | +24 yeni fonksiyon | 3 kritik bug fix | Dil: mcfunction*
