@@ -4,7 +4,7 @@
 # Event'i anlik degil, belirtilen delay tick sonra fire eder.
 # Mevcut tick'in yukunu dagitmak veya gecikmeli tetikleme icin kullanilir.
 #
-# BUG FIX v3.2: _fdeferred yerine event adi dogrudan queue item'a
+# BUG FIX v3.2: _fdeferred yerine event adi doğrudan queue item'a
 # gömülür. Boylece ayni tick'te birden fazla fire_queued cagrisi
 # birbirinin event adini ezmez.
 #

@@ -12,4 +12,6 @@
 #   function macro:cmd/ride with storage macro:input {}
 # ============================================
 
-$ride $(player) mount $(vehicle)
+# BUG FIX v3.5: "$(player)" adı direkt enjekte etmek yerine
+# @a[name=...] selector kullanılmalı — diğer cmd/ fonksiyonlarıyla tutarlı.
+$ride @a[name=$(player),limit=1] mount $(vehicle)

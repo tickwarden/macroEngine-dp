@@ -6,4 +6,5 @@
 # INPUT: macro:input { player:"<binici>" }
 # ============================================
 
-$ride $(player) dismount
+# BUG FIX v3.5: @a[name=...] selector kullanılmalı
+$ride @a[name=$(player),limit=1] dismount

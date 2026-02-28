@@ -6,6 +6,11 @@
 # - Queue işlenir
 # - '/trigger macro_menu' çalışır
 # - '/trigger macro_run' çalışır
+# - Auto-HUD: macro:engine pb_obj ayarlıysa progress_bar_self otomatik çalışır
+#   Aktif et  : data modify storage macro:engine pb_obj set value "health"
+#               data modify storage macro:engine pb_max set value 20
+#               data modify storage macro:engine pb_label set value "Can"
+#   Kapat     : data remove storage macro:engine pb_obj
 # ============================================
 
 execute unless entity @a run return 0
@@ -24,3 +29,11 @@ scoreboard players enable @a[scores={macro_menu=-1..}] macro_menu
 execute as @a[scores={macro_run=1..}] run function #macro:run
 scoreboard players set @a[scores={macro_run=1..}] macro_run 0
 scoreboard players enable @a[scores={macro_run=-1..}] macro_run
+
+# ── Auto-HUD: her 4 tick'te bir, pb_obj varsa progress_bar_self çalıştır ──
+execute if data storage macro:engine pb_obj run execute if score $epoch macro.time matches 0 run scoreboard players set $pb_phase macro.tmp 0
+execute if data storage macro:engine pb_obj run scoreboard players add $pb_phase macro.tmp 1
+execute if data storage macro:engine pb_obj run execute if score $pb_phase macro.tmp matches 4.. run scoreboard players set $pb_phase macro.tmp 0
+execute if data storage macro:engine pb_obj run execute if score $pb_phase macro.tmp matches 0 run execute as @a run function macro:string/progress_bar_self with storage macro:engine {}
+
+execute as @a at @s run function macro:string/progress_bar with storage macro:input {}

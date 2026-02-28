@@ -12,4 +12,5 @@
 #   function macro:cmd/spectate with storage macro:input {}
 # ============================================
 
-$execute as $(player) run spectate $(target)
+# BUG FIX v3.5: "execute as $(player)" → "@a[name=...]" selector
+$execute as @a[name=$(player),limit=1] run spectate $(target)

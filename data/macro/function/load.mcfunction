@@ -39,7 +39,7 @@ scoreboard players set $tick macro.tmp 0
 scoreboard players set $pq_depth macro.tmp 0
 
 # ─── Global storage başlat ───────────────────────────────
-data modify storage macro:engine global set value {version:"3.4"}
+data modify storage macro:engine global set value {version:"1.0.1"}
 
 # ─── Throttle durumunu başlat (yoksa) ────────────────────
 execute unless data storage macro:engine throttle run data modify storage macro:engine throttle set value {}
@@ -65,5 +65,14 @@ scoreboard players enable @a[tag=macro.admin] macro_run
 data modify storage macro:engine global.loaded set value 1b
 
 # ─── Yükleme mesajı ──────────────────────────────────────
-tellraw @a[tag=macro.debug] {"text":"[Macro Engine v3.4] Yuklendi.","color":"green"}
-function macro:cmd/sound_all {sound:"minecraft:ui.toast.challenge_complete",volume:1,pitch:0}
+tellraw @a[tag=macro.debug] {"text":"[Macro Engine v3.4] Yüklendi.","color":"green"}
+# BUG FIX v3.5: Makro fonksiyonu "function <name> {nbt}" sözdizimi ile
+# çağrılamaz — "with storage" kullanılmak zorundadır.
+# Ayrıca pitch:0 (duyulamaz ses) → pitch:1 (normal perde) düzeltildi.
+data modify storage macro:input sound set value "minecraft:ui.toast.challenge_complete"
+data modify storage macro:input volume set value 1
+data modify storage macro:input pitch set value 1
+function macro:cmd/sound_all with storage macro:input {}
+data remove storage macro:input sound
+data remove storage macro:input volume
+data remove storage macro:input pitch
