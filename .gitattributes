@@ -1,19 +1,64 @@
-# Auto detect text files and normalize line endings to LF
+# .gitattributes
+
+# ============================================
+# Global: Auto detect text files
+# ============================================
 * text=auto
 
-# Minecraft datapack files - always use LF
+# ============================================
+# Minecraft Datapack – Force LF
+# ============================================
 *.mcfunction text eol=lf
-*.json text eol=lf
-*.mcmeta text eol=lf
-*.md text eol=lf
+*.json       text eol=lf
+*.mcmeta     text eol=lf
+*.md         text eol=lf
+*.txt        text eol=lf
+*.nbt        binary
 
-# Images - binary
-*.png binary
-*.jpg binary
-*.jpeg binary
-*.gif binary
+# Tags & advancements safety
+*.advancement json text eol=lf
+*.recipe      json text eol=lf
+*.loot_table  json text eol=lf
+*.predicate   json text eol=lf
 
-# Archives - binary
-*.zip binary
-*.rar binary
-*.jar binary
+# ============================================
+# Config & Build Files
+# ============================================
+*.yml   text eol=lf
+*.yaml  text eol=lf
+*.toml  text eol=lf
+*.properties text eol=lf
+
+# ============================================
+# Windows-specific (optional)
+# Uncomment if you REALLY need CRLF scripts
+# ============================================
+# *.bat  text eol=crlf
+# *.ps1  text eol=crlf
+
+# ============================================
+# Binary Assets
+# ============================================
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.webp  binary
+*.ico   binary
+
+# ============================================
+# Archives & Compiled
+# ============================================
+*.zip   binary
+*.rar   binary
+*.7z    binary
+*.jar   binary
+*.exe   binary
+*.dll   binary
+*.so    binary
+*.class binary
+
+# ============================================
+# Prevent accidental merge corruption
+# ============================================
+*.lock  binary
