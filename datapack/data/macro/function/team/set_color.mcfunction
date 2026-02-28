@@ -11,4 +11,4 @@
 
 $team modify $(team) color $(color)
 $data modify storage macro:engine teams.$(team).color set value "$(color)"
-$tellraw @a[tag=macro.debug] [{"text":"[Team] ","color":"aqua"},{"text":"$(team)"},{"text":" renk → "},{"text":"$(color)"}]
+$tellraw @a[tag=macro.debug] [{"text":"[Team] ","color":"aqua"},{"text":"$(team)"},{"text":" renk -> "},{"text":"$(color)"}]

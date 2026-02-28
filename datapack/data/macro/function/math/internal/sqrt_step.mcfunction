@@ -2,7 +2,7 @@
 # macro:math/internal/sqrt_step
 # ============================================
 # macro:math/sqrt tarafindan cagrilan binary search adimi.
-# Dogrudan cagirmayin.
+# Doğrudan çağırmayın.
 #
 # Kullandigi scoreboard skorlari:
 #   $sqrt_n   - orijinal deger (sabit)

@@ -5,7 +5,7 @@
 # /function macro:debug/example_events ile çalıştırın.
 # ============================================
 
-tellraw @a[tag=macro.debug] {"text":"[DEBUG] event sistemi test başlıyor...","color":"yellow"}
+tellraw @a[tag=macro.debug] {"text":"[DEBUG] event sistemi test basliyor...","color":"yellow"}
 
 # ─── on_join event kaydı ─────────────────────────────────
 data modify storage macro:input event set value "on_join"
@@ -30,4 +30,4 @@ function macro:event/fire with storage macro:input {}
 # BUG FIX: "data modify storage macro:input set value {}" geçersiz — tek tek temizle
 data remove storage macro:input event
 
-tellraw @a[tag=macro.debug] {"text":"[DEBUG] example_events tamamlandı.","color":"green"}
+tellraw @a[tag=macro.debug] {"text":"[DEBUG] example_events tamamlandi.","color":"green"}
