@@ -12,7 +12,7 @@
 #   function macro:flag/toggle with storage macro:input {}
 # ============================================
 
-# Mevcut durumu skora yükle: var=1, yok=0
+# Mevcut durumu skora yukle: var=1, yok=0
 scoreboard players set $ftgl macro.tmp 0
 $execute if data storage macro:engine flags.$(key) run scoreboard players set $ftgl macro.tmp 1
 

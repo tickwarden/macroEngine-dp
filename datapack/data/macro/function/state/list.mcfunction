@@ -9,5 +9,5 @@
 
 tellraw @a[tag=macro.debug] [{"text":"--- Oyuncu Durumlari ---","color":"gold"}]
 execute if data storage macro:engine states run tellraw @a[tag=macro.debug] [{"text":"  ","color":"gray"},{"storage":"macro:engine","nbt":"states","interpret":false,"color":"white"}]
-execute unless data storage macro:engine states run tellraw @a[tag=macro.debug] {"text":"  [!] Kayıtlı durum yok.","color":"red"}
+execute unless data storage macro:engine states run tellraw @a[tag=macro.debug] {"text":"  [!] Kayitli durum yok.","color":"red"}
 tellraw @a[tag=macro.debug] [{"text":"------------------------","color":"gold"}]

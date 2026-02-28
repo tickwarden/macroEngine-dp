@@ -4,7 +4,7 @@
 # Event'i anlik degil, belirtilen delay tick sonra fire eder.
 # Mevcut tick'in yukunu dagitmak veya gecikmeli tetikleme icin kullanilir.
 #
-# BUG FIX v3.2: _fdeferred yerine event adi doğrudan queue item'a
+# BUG FIX v3.2: _fdeferred yerine event adi dogrudan queue item'a
 # gömülür. Boylece ayni tick'te birden fazla fire_queued cagrisi
 # birbirinin event adini ezmez.
 #
@@ -17,7 +17,7 @@
 #   # 3 saniye sonra on_round_end tetiklenecek
 # ============================================
 
-# Event kayıtlı degilse kuyruğa ekleme
+# Event kayitli degilse kuyruga ekleme
 $execute unless data storage macro:engine events.$(event) run return 0
 
 # event adini queue item'in icine göm — _fdeferred race condition yok
