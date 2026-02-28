@@ -1,83 +1,133 @@
 # Advanced Macro Engine — Changelog
 
-## v3.2 (Geliştirme)
+## v3.3 (Geliştirme)
+
+### 📦 Yeni: `data/macro/damage_type/`
+Özel hasar tipi JSON'ları. `macro:cmd/damage_typed` ile kullanılır.
+
+| Dosya | `message_id` | Efekt | Scaling |
+|---|---|---|---|
+| `macro:magic` | magic | none | never |
+| `macro:true_damage` | generic | none | never |
+| `macro:void_custom` | outOfWorld | none | never |
+| `macro:fire_custom` | inFire | burning | when_caused_by_living_non_player |
+| `macro:wither_custom` | wither | wither | never |
+
+### 📦 Yeni: `data/macro/item_modifier/`
+Hazır item modifier JSON'ları. `macro:cmd/item_modify` ile uygulanır.
+
+| Dosya | Etki |
+|---|---|
+| `repair_full` | Hasarı sıfırla (tam tamir) |
+| `damage_random` | Rastgele hasar uygula |
+| `enchant_randomly` | Rastgele büyü ekle (`#on_random_loot`) |
+| `enchant_with_levels_5` | 5 seviye büyü ekle |
+| `enchant_with_levels_30` | 30 seviye büyü ekle |
+| `set_count_1` / `set_count_64` | Miktar ayarla |
+| `lore_add_custom` | Lore satırı ekle (append) |
+| `lore_clear` | Tüm lore'u sil |
+| `glint_add` / `glint_remove` | Büyü parlaması aç/kapat |
+| `unbreakable` | Kırılmaz yap |
+| `hide_tooltip` | Tooltip'i gizle |
+| `rename_to_custom` | "Custom Item" olarak yeniden adlandır (şablon) |
+
+### 📦 Yeni: `data/macro/loot_table/`
+Hazır loot table şablonları. `macro:cmd/loot_give` ve `macro:cmd/loot_drop` ile kullanılır.
+
+| Dosya | Açıklama |
+|---|---|
+| `util/empty` | Hiçbir şey düşürme |
+| `util/xp_only` | Sadece XP (item yok) |
+| `template/single_item` | Tek item — düzenlenebilir şablon |
+| `template/weighted_pool` | Ağırlıklı rastgele havuz şablonu |
+| `template/conditional_drop` | Yalnızca oyuncu vuruşunda düşür |
+| `template/bonus_per_looting` | Looting büyüsüne göre ekstra drop |
+
+### 📦 Yeni: `data/macro/advancement/`
+Kolayca kopyalanıp özelleştirilebilen advancement şablonları.
+
+| Dosya | Frame | Toast | Sohbet | XP Ödülü |
+|---|---|---|---|---|
+| `hidden/root` | task | ✗ | ✗ | — |
+| `template/task` | task | ✓ | ✗ | — |
+| `template/goal` | goal | ✓ | ✓ | — |
+| `template/challenge` | challenge | ✓ | ✓ | 100 |
+
+### ✨ Yeni: `predicate/` Genişlemesi
+Mevcut predicate setine eklenenler:
+
+`is_flying`, `is_gliding`, `is_in_water`, `is_baby`, `is_hungry`,  
+`is_holding_sword`, `is_holding_bow`, `is_holding_trident`,  
+`has_empty_offhand`, `weather_clear`, `health_below_half`
+
+### ✨ Yeni: `cmd/` Fonksiyonları
+| Fonksiyon | Açıklama |
+|---|---|
+| `cmd/attribute_add_modifier` | Attribute modifier ekle (add_value / multiplied) |
+| `cmd/attribute_remove_modifier` | Attribute modifier kaldır (id ile) |
+| `cmd/attribute_get_modifier` | Belirli modifier değerini oku |
+| `cmd/damage_typed` | Özel `damage_type` ile hasar ver |
+| `cmd/item_modify` | Slot'a item_modifier uygula |
+| `cmd/item_rename` | Slot'a rename modifier uygula |
+| `cmd/loot_drop` | Koordinata loot table'dan item düşür |
+| `cmd/loot_give` | Oyuncuya loot table içeriğini ver |
+| `cmd/advancement_grant` | Oyuncuya advancement ver |
+| `cmd/advancement_revoke` | Oyuncudan advancement al |
+| `cmd/advancement_check` | Advancement var mı kontrol et → `1b/0b` |
+
+### ✨ Yeni: `string/` Fonksiyonları
+| Fonksiyon | Açıklama |
+|---|---|
+| `string/hover_text` | Hover'da açıklama gösteren tellraw |
+| `string/click_run` | Tıklanınca komut çalıştıran buton |
+| `string/click_suggest` | Tıklanınca sohbete metin öneren buton |
+| `string/link` | Tıklanınca URL açan bağlantı metni |
+| `string/copy_to_clipboard` | Tıklanınca panoya kopyalayan buton |
+| `string/announce_prefix` | `[PREFIX] mesaj` formatında duyuru |
+| `string/tooltip_item` | Hover'da item tooltip gösteren metin |
+
+---
+
+## v3.2
 
 ### 🐛 Bug Fixes
-- **math/random**: `$epoch=0` durumunda (ilk tick veya sunucu yeni başladığında) LCG tohumunun çok zayıf kalması giderildi. 57005 (0xDEAD) sabit ofseti eklendi; `$tick*31` ile aynı tick'teki çağrılar daha iyi entropi ile ayrıştırılıyor.
+- **math/random**: `$epoch=0` durumunda LCG tohumunun zayıf kalması giderildi. 57005 (0xDEAD) sabit ofseti eklendi.
 
 ### ✨ Yeni: Event Sistemi
-| Fonksiyon | Açıklama |
-|---|---|
-| `event/unregister_one` | Bir event'ten yalnızca belirli bir handler'ı siler (diğerleri korunur) |
-| `event/has` | Event'in kayıtlı handler'ı var mı kontrol eder → `1b/0b` |
-| `event/count` | Kayıtlı handler sayısını döndürür |
-| `event/clear_context` | `event_context` storage'ını temizler |
-| `event/fire_queued` | Event'i N tick sonra asenkron olarak fire eder |
+`event/unregister_one`, `event/has`, `event/count`, `event/clear_context`, `event/fire_queued`
 
 ### ✨ Yeni: Queue / Zamanlama
-| Fonksiyon | Açıklama |
-|---|---|
-| `lib/queue_clear` | Bekleyen tüm kuyruk öğelerini siler |
-| `lib/schedule_list` | Aktif schedule'ları ve queue'yu debug olarak gösterir |
-| `lib/schedule_reset` | Bir schedule'ın geri sayımını sıfırlar (cancel + reschedule) |
+`lib/queue_clear`, `lib/schedule_list`, `lib/schedule_reset`
 
 ### ✨ Yeni: Matematik Kütüphanesi
-| Fonksiyon | Açıklama |
-|---|---|
-| `math/map` | Bir değeri `[in_min, in_max]` → `[out_min, out_max]` aralığına eşler |
-| `math/wrap` | Değeri `[min, max)` döngüsel aralıkta tutar (rotasyon, indeks sarma) |
-| `math/log2` | `floor(log₂(value))` — 2 tabanında tamsayı logaritma |
-| `math/mod` | Güvenli modulo — her zaman `[0, divisor)` sonuç verir (negatif koruma) |
+`math/map`, `math/wrap`, `math/log2`, `math/mod`
 
 ### ✨ Yeni Modül: `flag/`
-Global boolean bayrak sistemi. Oyun durumları, özellik anahtarları ve koşullu mantık için.
-- `flag/set` — bayrak koy
-- `flag/unset` — bayrağı kaldır
-- `flag/get` → `1b/0b`
-- `flag/toggle` → tersle, yeni durumu döndür
-- `flag/list` — tüm bayrakları debug'da göster
+`flag/set`, `flag/unset`, `flag/get`, `flag/toggle`, `flag/list`
 
 ### ✨ Yeni Modül: `state/`
-Oyuncu durum makinesi. Her oyuncuya string bir durum atanabilir.
-- `state/set` — durum ata
-- `state/get` → durum string'i
-- `state/is` → `1b/0b` eşleşme kontrolü
-- `state/clear` — oyuncunun durumunu sil
-- `state/clear_all` — tüm oyuncu durumlarını sil
-- `state/list` — debug'da göster
+`state/set`, `state/get`, `state/is`, `state/clear`, `state/clear_all`, `state/list`
 
 ### ✨ Yeni: cmd/ Komutları
-| Fonksiyon | Açıklama |
-|---|---|
-| `cmd/msg` | Oyuncuya özel (whisper) metin mesajı |
-| `cmd/msg_raw` | Oyuncuya ham JSON tellraw mesajı |
-| `cmd/clone` | Blok bölgesi kopyalama |
-| `cmd/clone_masked` | Yalnızca hava olmayan blokları kopyala |
-| `cmd/ride` | Oyuncuyu/entity'yi araça bindir |
-| `cmd/ride_dismount` | Araçtan indir |
-| `cmd/forceload_add` | Chunk'ı zorla yüklü tut |
-| `cmd/forceload_remove` | Zorla yüklemeyi kaldır |
-| `cmd/trigger_set` | Trigger objective değerini ayarla |
-| `cmd/spectate` | Spectator oyuncuyu hedefe bağla |
-| `cmd/spectate_stop` | Spectator izlemeyi sonlandır |
-| `cmd/place_feature` | Feature yerleştir (ağaç, mineral vb.) |
-| `cmd/place_structure` | NBT yapısı yerleştir |
+`cmd/msg`, `cmd/msg_raw`, `cmd/clone`, `cmd/clone_masked`, `cmd/ride`, `cmd/ride_dismount`,
+`cmd/forceload_add`, `cmd/forceload_remove`, `cmd/trigger_set`, `cmd/spectate`, `cmd/spectate_stop`,
+`cmd/place_feature`, `cmd/place_structure`
 
 ---
 
 ## v3.1
 
 ### 🐛 Bug Fixes
-- **lib/schedule**: Aynı key ile tekrar çağrılınca queue'ya duplicate giriş eklenmesi giderildi. Artık yalnızca `func/interval` güncellenir.
+- **lib/schedule**: Aynı key ile tekrar çağrılınca queue'ya duplicate giriş eklenmesi giderildi.
 
 ---
 
 ## v3.0
 
 ### 🐛 Bug Fixes
-- **load**: `$epoch macro.time` artık `/reload`'da sıfırlanmıyor — cooldown'lar sunucu yeniden başlatmadan korunuyor.
-- **lib/process_queue**: `$pq_depth` ile tick başına 256 özyineleme limiti eklendi — stack overflow engeli.
-- **debug/example_events**: `event_context` path düzeltildi, input temizleme düzeltildi.
+- **load**: `$epoch macro.time` artık `/reload`'da sıfırlanmıyor.
+- **lib/process_queue**: `$pq_depth` ile tick başına 256 özyineleme limiti eklendi.
+- **debug/example_events**: `event_context` path düzeltildi.
 
 ---
 
