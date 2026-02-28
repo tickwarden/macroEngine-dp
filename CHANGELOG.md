@@ -1,5 +1,21 @@
 # Advanced Macro Engine — Changelog
 
+## v3.4
+
+### 🐛 Bug Fixes & İyileştirmeler
+- **load/warn**: Sunucu başlarken oyuncu yoksa `macro:load` direkt çalışır, gereksiz dialog satırına geçmez (`return run` ile)
+- **load/warn**: `@p` yerine `@a` — tüm çevrimiçi oyunculara uyarı gösterilir
+
+### ✨ Yeni: `load/warn.mcfunction`
+Sunucu yüklenirken deneysel özellikler hakkında oyuncuları bilgilendiren onay dialogu.
+- Oyuncu yoksa: `macro:load` direkt çalışır
+- Oyuncu varsa: "Çıkış Yap" veya "Devam Et" seçenekli dialog gösterilir
+
+### 🔧 Versiyon Tutarlılığı
+- `load.mcfunction`, `pack.mcmeta` ve storage versiyonları `v3.4` ile eşleştirildi
+
+---
+
 ## v3.3 (Geliştirme)
 
 ### 📦 Yeni: `data/macro/damage_type/`

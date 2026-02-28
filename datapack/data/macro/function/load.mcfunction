@@ -1,10 +1,10 @@
 # ============================================
-# macro:load — Advanced Macro Engine v3.2
+# macro:load — Advanced Macro Engine v3.4
 # ============================================
 # /reload veya sunucu başlangıcında otomatik çalışır.
 # Scoreboard, storage ve schedule başlatır.
 #
-# v3.2 değişiklikleri:
+# v3.4 değişiklikleri:
 #   + flag/ ve state/ modülleri için storage başlatma
 #   + math/random tohum iyileştirmesi (BUG FIX)
 #   + event/unregister_one eklendi
@@ -39,7 +39,7 @@ scoreboard players set $tick macro.tmp 0
 scoreboard players set $pq_depth macro.tmp 0
 
 # ─── Global storage başlat ───────────────────────────────
-data modify storage macro:engine global set value {version:"3.3"}
+data modify storage macro:engine global set value {version:"3.4"}
 
 # ─── Throttle durumunu başlat (yoksa) ────────────────────
 execute unless data storage macro:engine throttle run data modify storage macro:engine throttle set value {}
@@ -65,5 +65,5 @@ scoreboard players enable @a[tag=macro.admin] macro_run
 data modify storage macro:engine global.loaded set value 1b
 
 # ─── Yükleme mesajı ──────────────────────────────────────
-tellraw @a[tag=macro.debug] {"text":"[Macro Engine v3.2] Yuklendi.","color":"green"}
+tellraw @a[tag=macro.debug] {"text":"[Macro Engine v3.4] Yuklendi.","color":"green"}
 function macro:cmd/sound_all {sound:"minecraft:ui.toast.challenge_complete",volume:1,pitch:0}
