@@ -2,6 +2,21 @@
 
 ---
 
+## v1.0.1
+
+### 🐛 Bug Fixes
+
+- **pack.mcmeta — filter regex**: `macro` namespace filtresi `".*\\\\\\.(...)$"` olarak yazılmıştı; bu JSON'da `.*\\.(...)` regex'i üretiyordu ancak Minecraft `\` kaçırmasını farklı yorumladığından hiçbir dosya filtrelenmiyordu. `minecraft` namespace filtresiyle tutarlı olacak şekilde `".*\\.(...)$"` olarak düzeltildi.
+- **pack.mcmeta — versiyon**: Açıklama metni `v1.0.0` yazıyordu, pack adı `v1.0.1`. Düzeltildi.
+- **item_modifier/hide_tooltip — overlay yanlış sürüm**: `-1_21_4` overlay'i (format 48–61, yani 1.21.0–1.21.4 arası) `minecraft:hide_tooltip: {}` kullanıyordu. Ancak bu bileşen 1.21.4'te (format 61) `minecraft:tooltip_display` olarak yeniden adlandırıldı; dolayısıyla 1.21.4'te `hide_tooltip` geçersizdi. Çözüm olarak yeni `_pre_1_21_4` overlay'i (format 48–57, 1.21.0–1.21.3) oluşturuldu ve eski sözdizimi buraya taşındı. `-1_21_4` overlay'inden `hide_tooltip.json` kaldırıldı; 1.21.4 ana pack'teki `tooltip_display` formatını kullanıyor.
+- **tick.mcfunction — `macro:dialog/open` sadece 1.21.6+ overlay'inde mevcut**: Ana `tick.mcfunction` her tick'te `macro:dialog/open` çağırıyordu; bu fonksiyon yalnızca `1_21_6` overlay'inde tanımlı (format 80–94). 1.21.4 ve öncesinde her tick logda `Unknown function` hatası üretiyordu. `-1_21_4` overlay'ine dialog satırları içermeyen ayrı bir `tick.mcfunction` eklendi.
+- **1_21_6 overlay — CRLF satır sonları**: Dialog overlay'indeki 5 `.mcfunction` dosyasının tamamı Windows satır sonları (CRLF) içeriyordu. Linux/macOS sunucularda parse hatasına yol açabilir; LF'e dönüştürüldü.
+- **dialog/show.mcfunction — eksik guard**: `show_macro`, `$(DIALOG)` makro değişkenine ihtiyaç duyuyor; ancak `dialog.DIALOG` storage anahtarı ayarlanmamışsa makro hatası fırlatıyordu. `execute unless data storage macro:engine dialog.DIALOG run return 0` guard'ı eklendi.
+- **1_21_6/dialog/loading.json — metin bileşeni formatı**: `title` ve `label` alanları düz string olarak yazılmıştı (`""`, `"İptal"`). 1.21.5+ dialog formatı JSON text component bekliyor (`{"text": "..."}`). Düzeltildi.
+- **lib/internal/schedule_reset_restore.mcfunction — tanımsız makro + ölü kod**: Fonksiyon kodun hiçbir yerinde çağrılmıyordu ve açıklamasında belirtilmeyen `$(key)` makro değişkenini kullanıyordu (input yalnızca `{func, interval}` kabul ediyor). Kaldırıldı.
+
+---
+
 ## v1.0.0
 
 ### 🐛 Bug Fixes
