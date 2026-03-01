@@ -1,0 +1,346 @@
+name: Validate & Release
+
+on:
+  push:
+    branches: [ main ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # ─────────────────────────────────────────────
+  # 1. JSON Validation
+  # ─────────────────────────────────────────────
+  validate-json:
+    name: Validate JSON
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate all JSON files
+        run: |
+          echo "Validating JSON files..."
+          FAILED=0
+          while IFS= read -r file; do
+            if python3 -c "import json,sys; json.load(open(sys.argv[1]))" "$file" 2>/dev/null; then
+              echo "✅ $file"
+            else
+              echo "❌ Invalid JSON: $file"
+              python3 -c "
+          import json, sys
+          try:
+              json.load(open(sys.argv[1]))
+          except json.JSONDecodeError as e:
+              print(f'   └─ {e}')
+          " "$file" || true
+              FAILED=1
+            fi
+          done < <(find data _pre_1_21_4 -1_21_4 1_21_6 -name "*.json" 2>/dev/null)
+
+          if python3 -c "import json; json.load(open('pack.mcmeta'))" 2>/dev/null; then
+            echo "✅ pack.mcmeta"
+          else
+            echo "❌ Invalid JSON: pack.mcmeta"
+            FAILED=1
+          fi
+
+          if [ $FAILED -ne 0 ]; then
+            echo ""
+            echo "❌ One or more JSON files are invalid. Fix them before merging."
+            exit 1
+          fi
+          echo ""
+          echo "✅ All JSON files are valid."
+
+  # ─────────────────────────────────────────────
+  # 2. pack.mcmeta Structural Validation
+  # ─────────────────────────────────────────────
+  validate-pack:
+    name: Validate pack.mcmeta
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate pack.mcmeta structure
+        run: |
+          python3 << 'PYEOF'
+          import json, os, sys
+
+          FAILED = False
+
+          with open("pack.mcmeta") as f:
+            data = json.load(f)
+
+          # Required top-level keys
+          for key in ["pack"]:
+            if key not in data:
+              print(f"❌ Missing key: '{key}'")
+              FAILED = True
+
+          pack = data.get("pack", {})
+
+          # Required pack keys
+          for key in ["pack_format", "description"]:
+            if key not in pack:
+              print(f"❌ Missing pack key: '{key}'")
+              FAILED = True
+            else:
+              print(f"✅ pack.{key}: {pack[key]!r}" if key == "pack_format" else f"✅ pack.{key} present")
+
+          # supported_formats check
+          if "supported_formats" in pack:
+            sf = pack["supported_formats"]
+            fmt = pack.get("pack_format")
+            if isinstance(sf, list) and fmt not in sf:
+              print(f"⚠️  pack_format ({fmt}) not in supported_formats {sf}")
+            else:
+              print(f"✅ supported_formats: {sf}")
+
+          # Overlay directory existence
+          if "overlays" in data:
+            entries = data["overlays"].get("entries", [])
+            print(f"✅ overlays: {len(entries)} entries")
+            for entry in entries:
+              d = entry.get("directory", "")
+              if not d:
+                print(f"❌ Overlay entry missing 'directory' key")
+                FAILED = True
+              elif not os.path.isdir(d):
+                print(f"❌ Overlay directory not found: '{d}/'")
+                FAILED = True
+              else:
+                fmt_range = entry.get("formats", {})
+                min_f = fmt_range.get("min_inclusive", "?")
+                max_f = fmt_range.get("max_inclusive", "?")
+                print(f"  ✅ {d}/ (formats {min_f}–{max_f})")
+
+          if FAILED:
+            sys.exit(1)
+          print("\n✅ pack.mcmeta is structurally valid.")
+          PYEOF
+
+  # ─────────────────────────────────────────────
+  # 3. Function Reference Integrity
+  # ─────────────────────────────────────────────
+  validate-functions:
+    name: Validate Function References
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check function references in tags
+        run: |
+          python3 << 'PYEOF'
+          import json, os, glob, sys
+
+          FAILED = False
+
+          def ns_to_path(ref, base_dirs):
+            """macro:lib/schedule -> data/macro/function/lib/schedule.mcfunction"""
+            if ref.startswith("#"):
+              return None  # tag reference, skip
+            if ":" not in ref:
+              return None
+            ns, path = ref.split(":", 1)
+            for base in base_dirs:
+              full = os.path.join(base, "data", ns, "function", path + ".mcfunction")
+              if os.path.exists(full):
+                return full
+            return None
+
+          base_dirs = [".", "_pre_1_21_4", "-1_21_4", "1_21_6"]
+
+          tag_files = glob.glob("**/tags/function/**/*.json", recursive=True)
+          for tag_file in tag_files:
+            with open(tag_file) as f:
+              try:
+                data = json.load(f)
+              except json.JSONDecodeError:
+                continue
+            values = data.get("values", [])
+            for ref in values:
+              if isinstance(ref, dict):
+                ref = ref.get("id", "")
+              if ref.startswith("#"):
+                continue
+              path = ns_to_path(ref, [".", "_pre_1_21_4", "-1_21_4", "1_21_6"])
+              if path is None:
+                print(f"❌ {tag_file}: function '{ref}' not found")
+                FAILED = True
+              else:
+                print(f"  ✅ {ref}")
+
+          if FAILED:
+            print("\n❌ Some function tag references point to missing functions.")
+            sys.exit(1)
+          else:
+            print("\n✅ All function tag references are valid.")
+          PYEOF
+
+      - name: Check for empty .mcfunction files
+        run: |
+          echo "Checking for empty .mcfunction files..."
+          EMPTY=0
+          while IFS= read -r file; do
+            # Ignore comment-only or whitespace-only files
+            content=$(grep -v '^\s*#' "$file" | grep -v '^\s*$' || true)
+            if [ -z "$content" ]; then
+              echo "⚠️  Empty (or comment-only): $file"
+              EMPTY=$((EMPTY + 1))
+            fi
+          done < <(find data _pre_1_21_4 -1_21_4 1_21_6 -name "*.mcfunction" 2>/dev/null)
+          if [ $EMPTY -gt 0 ]; then
+            echo "⚠️  $EMPTY empty/comment-only function files found. This may be intentional."
+          else
+            echo "✅ No empty .mcfunction files."
+          fi
+
+  # ─────────────────────────────────────────────
+  # 4. Required Files Check
+  # ─────────────────────────────────────────────
+  validate-structure:
+    name: Validate File Structure
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check required files and directories
+        run: |
+          FAILED=0
+
+          echo "=== Required files ==="
+          for f in pack.mcmeta pack.png; do
+            if [ ! -f "$f" ]; then
+              echo "❌ Missing: $f"
+              FAILED=1
+            else
+              echo "✅ $f"
+            fi
+          done
+
+          echo ""
+          echo "=== Required directories ==="
+          for d in data _pre_1_21_4 -1_21_4 1_21_6; do
+            if [ ! -d "$d" ]; then
+              echo "❌ Missing directory: $d/"
+              FAILED=1
+            else
+              count=$(find "$d" -type f | wc -l)
+              echo "✅ $d/ ($count files)"
+            fi
+          done
+
+          echo ""
+          echo "=== Critical function files ==="
+          for fn in \
+            "data/macro/function/load.mcfunction" \
+            "data/macro/function/tick.mcfunction" \
+            "data/minecraft/tags/function/load.json" \
+            "data/minecraft/tags/function/tick.json"; do
+            if [ ! -f "$fn" ]; then
+              echo "❌ Missing critical file: $fn"
+              FAILED=1
+            else
+              echo "✅ $fn"
+            fi
+          done
+
+          if [ $FAILED -ne 0 ]; then
+            echo ""
+            echo "❌ Required files or directories are missing."
+            exit 1
+          fi
+          echo ""
+          echo "✅ File structure is complete."
+
+  # ─────────────────────────────────────────────
+  # 5. Version Tag Check (release only)
+  # ─────────────────────────────────────────────
+  validate-version:
+    name: Validate Version
+    runs-on: ubuntu-latest
+    needs: [ validate-json, validate-pack, validate-functions, validate-structure ]
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check version tag matches pack.mcmeta
+        run: |
+          TAG=${GITHUB_REF#refs/tags/v}
+          python3 << PYEOF
+          import json, re, sys
+
+          tag = "$TAG"
+
+          with open("pack.mcmeta") as f:
+            raw = json.dumps(json.load(f))
+
+          versions = re.findall(r'v(\d+\.\d+\.\d+)', raw)
+
+          if not versions:
+            print(f"⚠️  No version string found in pack.mcmeta description.")
+            print(f"   Consider adding 'v{tag}' to the description.")
+          elif tag not in versions:
+            print(f"❌ Tag v{tag} does not match pack.mcmeta version(s): {versions}")
+            print(f"   Update pack.mcmeta description to 'v{tag}' before releasing.")
+            sys.exit(1)
+          else:
+            print(f"✅ Version v{tag} matches pack.mcmeta.")
+          PYEOF
+
+      - name: Check CHANGELOG for this version
+        run: |
+          TAG=${GITHUB_REF#refs/tags/}
+          if [ ! -f "docs/CHANGELOG.md" ]; then
+            echo "⚠️  docs/CHANGELOG.md not found — skipping changelog check."
+          elif grep -q "$TAG" docs/CHANGELOG.md; then
+            echo "✅ $TAG found in CHANGELOG.md"
+          else
+            echo "⚠️  $TAG not found in docs/CHANGELOG.md — consider documenting this release."
+          fi
+
+  # ─────────────────────────────────────────────
+  # 6. Package & Release
+  # ─────────────────────────────────────────────
+  release:
+    name: Package & Release
+    runs-on: ubuntu-latest
+    needs: [ validate-json, validate-pack, validate-functions, validate-structure ]
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build datapack ZIP
+        run: |
+          TAG=${GITHUB_REF#refs/tags/}
+          ZIP_NAME="macroEngine-${TAG}.zip"
+
+          zip -r "$ZIP_NAME" \
+            data/ \
+            _pre_1_21_4/ \
+            -1_21_4/ \
+            1_21_6/ \
+            pack.mcmeta \
+            pack.png
+
+          echo "ZIP_NAME=$ZIP_NAME" >> $GITHUB_ENV
+
+          SIZE=$(du -sh "$ZIP_NAME" | cut -f1)
+          FILES=$(unzip -l "$ZIP_NAME" | tail -1 | awk '{print $2}')
+          echo "✅ Built: $ZIP_NAME ($SIZE, $FILES files)"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "macroEngine ${{ github.ref_name }}"
+          files: ${{ env.ZIP_NAME }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
