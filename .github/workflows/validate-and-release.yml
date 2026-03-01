@@ -294,16 +294,16 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && github.event.inputs.version != '')
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            TAG="${{ inputs.version }}"
+            TAG="${{ github.event.inputs.version }}"
             TAG="${TAG#v}"
           else
             TAG="${GITHUB_REF#refs/tags/v}"
           fi
 
-          python3 << PYEOF
-          import json, re, sys
+          TAG_ENV="$TAG" python3 << 'PYEOF'
+          import json, re, sys, os
 
-          tag = "$TAG"
+          tag = os.environ.get("TAG_ENV", "")
 
           with open("pack.mcmeta") as f:
             raw = json.dumps(json.load(f))
@@ -311,7 +311,7 @@ jobs:
           versions = re.findall(r'v(\d+\.\d+\.\d+)', raw)
 
           if not versions:
-            print(f"⚠️  No version string found in pack.mcmeta.")
+            print("⚠️  No version string found in pack.mcmeta.")
           elif tag not in versions:
             print(f"❌ Version v{tag} does not match pack.mcmeta: {versions}")
             print(f"   Update pack.mcmeta description to 'v{tag}' before releasing.")
@@ -323,7 +323,7 @@ jobs:
       - name: Check CHANGELOG for this version
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            TAG="${{ inputs.version }}"
+            TAG="${{ github.event.inputs.version }}"
           else
             TAG="${GITHUB_REF#refs/tags/}"
           fi
@@ -351,7 +351,7 @@ jobs:
       - name: Resolve version tag
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            TAG="${{ inputs.version }}"
+            TAG="${{ github.event.inputs.version }}"
             if [ -z "$TAG" ]; then
               echo "❌ No version provided for manual release."
               exit 1
@@ -377,7 +377,7 @@ jobs:
           echo "ZIP_NAME=$ZIP_NAME" >> $GITHUB_ENV
 
           SIZE=$(du -sh "$ZIP_NAME" | cut -f1)
-          FILES=$(unzip -l "$ZIP_NAME" | tail -1 | awk '{print $2}')
+          FILES=$(unzip -l "$ZIP_NAME" 2>/dev/null | tail -1 | awk '{print $2}') || FILES="?"
           echo "✅ Built: $ZIP_NAME ($SIZE, $FILES files)"
 
       - name: Create GitHub Release
