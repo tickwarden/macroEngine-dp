@@ -27,43 +27,34 @@ jobs:
     name: Validate JSON
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Validate all JSON files
         run: |
-          echo "Validating JSON files..."
+          set -euo pipefail
           FAILED=0
+
           while IFS= read -r file; do
             if python3 -c "import json,sys; json.load(open(sys.argv[1]))" "$file" 2>/dev/null; then
-              echo "✅ $file"
+              echo "OK: $file"
             else
-              echo "❌ Invalid JSON: $file"
+              echo "FAIL: $file"
               python3 -c "
-          import json, sys
-          try:
-              json.load(open(sys.argv[1]))
-          except json.JSONDecodeError as e:
-              print(f'   └─ {e}')
-          " "$file" || true
+import json, sys
+try:
+    json.load(open(sys.argv[1]))
+except json.JSONDecodeError as e:
+    print('  Error:', e)
+" "$file" 2>/dev/null || true
               FAILED=1
             fi
-          done < <(find data _pre_1_21_4 -1_21_4 1_21_6 -name "*.json" 2>/dev/null)
-
-          if python3 -c "import json; json.load(open('pack.mcmeta'))" 2>/dev/null; then
-            echo "✅ pack.mcmeta"
-          else
-            echo "❌ Invalid JSON: pack.mcmeta"
-            FAILED=1
-          fi
+          done < <(find data _pre_1_21_4 -1_21_4 1_21_6 pack.mcmeta -name "*.json" -o -name "pack.mcmeta" 2>/dev/null | sort)
 
           if [ $FAILED -ne 0 ]; then
-            echo ""
-            echo "❌ One or more JSON files are invalid. Fix them before merging."
+            echo "FAILED: One or more JSON files are invalid."
             exit 1
           fi
-          echo ""
-          echo "✅ All JSON files are valid."
+          echo "PASSED: All JSON files are valid."
 
   # ─────────────────────────────────────────────
   # 2. pack.mcmeta Structural Validation
@@ -72,62 +63,61 @@ jobs:
     name: Validate pack.mcmeta
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Validate pack.mcmeta structure
         run: |
-          python3 << 'PYEOF'
-          import json, os, sys
+          cat > /tmp/check_pack.py << 'PYEOF'
+import json, os, sys
 
-          FAILED = False
+FAILED = False
 
-          with open("pack.mcmeta") as f:
-            data = json.load(f)
+with open("pack.mcmeta") as f:
+    data = json.load(f)
 
-          for key in ["pack"]:
-            if key not in data:
-              print(f"❌ Missing key: '{key}'")
-              FAILED = True
+if "pack" not in data:
+    print("FAIL: Missing 'pack' key")
+    sys.exit(1)
 
-          pack = data.get("pack", {})
+pack = data["pack"]
 
-          for key in ["pack_format", "description"]:
-            if key not in pack:
-              print(f"❌ Missing pack key: '{key}'")
-              FAILED = True
-            else:
-              print(f"✅ pack.{key}: {pack[key]!r}" if key == "pack_format" else f"✅ pack.{key} present")
+for key in ["pack_format", "description"]:
+    if key not in pack:
+        print(f"FAIL: Missing pack.{key}")
+        FAILED = True
+    else:
+        print(f"OK: pack.{key} = {pack[key]!r}" if key == "pack_format" else f"OK: pack.{key} present")
 
-          if "supported_formats" in pack:
-            sf = pack["supported_formats"]
-            fmt = pack.get("pack_format")
-            if isinstance(sf, list) and fmt not in sf:
-              print(f"⚠️  pack_format ({fmt}) not in supported_formats {sf}")
-            else:
-              print(f"✅ supported_formats: {sf}")
+if "supported_formats" in pack:
+    sf = pack["supported_formats"]
+    fmt = pack.get("pack_format")
+    if isinstance(sf, list) and fmt not in sf:
+        print(f"WARN: pack_format ({fmt}) not in supported_formats {sf}")
+    else:
+        print(f"OK: supported_formats = {sf}")
 
-          if "overlays" in data:
-            entries = data["overlays"].get("entries", [])
-            print(f"✅ overlays: {len(entries)} entries")
-            for entry in entries:
-              d = entry.get("directory", "")
-              if not d:
-                print(f"❌ Overlay entry missing 'directory' key")
-                FAILED = True
-              elif not os.path.isdir(d):
-                print(f"❌ Overlay directory not found: '{d}/'")
-                FAILED = True
-              else:
-                fmt_range = entry.get("formats", {})
-                min_f = fmt_range.get("min_inclusive", "?")
-                max_f = fmt_range.get("max_inclusive", "?")
-                print(f"  ✅ {d}/ (formats {min_f}–{max_f})")
+if "overlays" in data:
+    entries = data["overlays"].get("entries", [])
+    print(f"OK: overlays = {len(entries)} entries")
+    for entry in entries:
+        d = entry.get("directory", "")
+        if not d:
+            print("FAIL: Overlay entry missing 'directory' key")
+            FAILED = True
+        elif not os.path.isdir(d):
+            print(f"FAIL: Overlay directory not found: {d}/")
+            FAILED = True
+        else:
+            fmt_range = entry.get("formats", {})
+            min_f = fmt_range.get("min_inclusive", "?")
+            max_f = fmt_range.get("max_inclusive", "?")
+            print(f"OK: {d}/ (formats {min_f}-{max_f})")
 
-          if FAILED:
-            sys.exit(1)
-          print("\n✅ pack.mcmeta is structurally valid.")
-          PYEOF
+if FAILED:
+    sys.exit(1)
+print("PASSED: pack.mcmeta is valid.")
+PYEOF
+          python3 /tmp/check_pack.py
 
   # ─────────────────────────────────────────────
   # 3. Function Reference Integrity
@@ -136,73 +126,63 @@ jobs:
     name: Validate Function References
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Check function references in tags
         run: |
-          python3 << 'PYEOF'
-          import json, os, glob, sys
+          cat > /tmp/check_functions.py << 'PYEOF'
+import json, os, glob, sys
 
-          FAILED = False
+FAILED = False
 
-          def ns_to_path(ref, base_dirs):
-            if ref.startswith("#"):
-              return None
-            if ":" not in ref:
-              return None
-            ns, path = ref.split(":", 1)
-            for base in base_dirs:
-              full = os.path.join(base, "data", ns, "function", path + ".mcfunction")
-              if os.path.exists(full):
-                return full
-            return None
+def ns_to_path(ref, base_dirs):
+    if ref.startswith("#") or ":" not in ref:
+        return None
+    ns, path = ref.split(":", 1)
+    for base in base_dirs:
+        full = os.path.join(base, "data", ns, "function", path + ".mcfunction")
+        if os.path.exists(full):
+            return full
+    return None
 
-          base_dirs = [".", "_pre_1_21_4", "-1_21_4", "1_21_6"]
+base_dirs = [".", "_pre_1_21_4", "-1_21_4", "1_21_6"]
+tag_files = glob.glob("**/tags/function/**/*.json", recursive=True)
 
-          tag_files = glob.glob("**/tags/function/**/*.json", recursive=True)
-          for tag_file in tag_files:
-            with open(tag_file) as f:
-              try:
-                data = json.load(f)
-              except json.JSONDecodeError:
-                continue
-            values = data.get("values", [])
-            for ref in values:
-              if isinstance(ref, dict):
-                ref = ref.get("id", "")
-              if ref.startswith("#"):
-                continue
-              path = ns_to_path(ref, base_dirs)
-              if path is None:
-                print(f"❌ {tag_file}: function '{ref}' not found")
-                FAILED = True
-              else:
-                print(f"  ✅ {ref}")
+for tag_file in tag_files:
+    with open(tag_file) as f:
+        try:
+            data = json.load(f)
+        except json.JSONDecodeError:
+            continue
+    for ref in data.get("values", []):
+        if isinstance(ref, dict):
+            ref = ref.get("id", "")
+        if not ref or ref.startswith("#"):
+            continue
+        if ns_to_path(ref, base_dirs):
+            print(f"OK: {ref}")
+        else:
+            print(f"FAIL: {tag_file} -> '{ref}' not found")
+            FAILED = True
 
-          if FAILED:
-            print("\n❌ Some function tag references point to missing functions.")
-            sys.exit(1)
-          else:
-            print("\n✅ All function tag references are valid.")
-          PYEOF
+if FAILED:
+    print("FAILED: Some function references are missing.")
+    sys.exit(1)
+print("PASSED: All function references are valid.")
+PYEOF
+          python3 /tmp/check_functions.py
 
       - name: Check for empty .mcfunction files
         run: |
-          echo "Checking for empty .mcfunction files..."
           EMPTY=0
           while IFS= read -r file; do
             content=$(grep -v '^\s*#' "$file" | grep -v '^\s*$' || true)
             if [ -z "$content" ]; then
-              echo "⚠️  Empty (or comment-only): $file"
+              echo "WARN: Empty/comment-only: $file"
               EMPTY=$((EMPTY + 1))
             fi
           done < <(find data _pre_1_21_4 -1_21_4 1_21_6 -name "*.mcfunction" 2>/dev/null)
-          if [ $EMPTY -gt 0 ]; then
-            echo "⚠️  $EMPTY empty/comment-only function files found. This may be intentional."
-          else
-            echo "✅ No empty .mcfunction files."
-          fi
+          [ $EMPTY -gt 0 ] && echo "WARN: $EMPTY empty files (may be intentional)" || echo "PASSED: No empty .mcfunction files."
 
   # ─────────────────────────────────────────────
   # 4. Required Files Check
@@ -211,57 +191,36 @@ jobs:
     name: Validate File Structure
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Check required files and directories
         run: |
           FAILED=0
 
-          echo "=== Required files ==="
           for f in pack.mcmeta pack.png; do
-            if [ ! -f "$f" ]; then
-              echo "❌ Missing: $f"
-              FAILED=1
-            else
-              echo "✅ $f"
-            fi
+            [ -f "$f" ] && echo "OK: $f" || { echo "FAIL: Missing $f"; FAILED=1; }
           done
 
-          echo ""
-          echo "=== Required directories ==="
           for d in data _pre_1_21_4 -1_21_4 1_21_6; do
-            if [ ! -d "$d" ]; then
-              echo "❌ Missing directory: $d/"
-              FAILED=1
-            else
+            if [ -d "$d" ]; then
               count=$(find "$d" -type f | wc -l)
-              echo "✅ $d/ ($count files)"
+              echo "OK: $d/ ($count files)"
+            else
+              echo "FAIL: Missing directory $d/"
+              FAILED=1
             fi
           done
 
-          echo ""
-          echo "=== Critical function files ==="
           for fn in \
             "data/macro/function/load.mcfunction" \
             "data/macro/function/tick.mcfunction" \
             "data/minecraft/tags/function/load.json" \
             "data/minecraft/tags/function/tick.json"; do
-            if [ ! -f "$fn" ]; then
-              echo "❌ Missing critical file: $fn"
-              FAILED=1
-            else
-              echo "✅ $fn"
-            fi
+            [ -f "$fn" ] && echo "OK: $fn" || { echo "FAIL: Missing $fn"; FAILED=1; }
           done
 
-          if [ $FAILED -ne 0 ]; then
-            echo ""
-            echo "❌ Required files or directories are missing."
-            exit 1
-          fi
-          echo ""
-          echo "✅ File structure is complete."
+          [ $FAILED -ne 0 ] && { echo "FAILED: Required files missing."; exit 1; }
+          echo "PASSED: File structure is complete."
 
   # ─────────────────────────────────────────────
   # 5. Version Validation
@@ -271,69 +230,59 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ validate-json, validate-pack, validate-functions, validate-structure ]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Check version in pack.mcmeta
         run: |
-          python3 << 'PYEOF'
-          import json, re
+          cat > /tmp/check_version.py << 'PYEOF'
+import json, re, sys, os
 
-          with open("pack.mcmeta") as f:
-            raw = json.dumps(json.load(f))
+with open("pack.mcmeta") as f:
+    raw = json.dumps(json.load(f))
 
-          versions = re.findall(r'v(\d+\.\d+\.\d+)', raw)
+versions = re.findall(r'v(\d+\.\d+\.\d+)', raw)
 
-          if not versions:
-            print("⚠️  No version string found in pack.mcmeta description.")
-          else:
-            print(f"✅ Version in pack.mcmeta: v{versions[0]}")
-          PYEOF
+if not versions:
+    print("WARN: No version string found in pack.mcmeta description.")
+else:
+    print(f"OK: Version in pack.mcmeta: v{versions[0]}")
 
-      - name: Check version tag matches pack.mcmeta
-        if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && github.event.inputs.version != '')
-        run: |
+tag = os.environ.get("CHECK_TAG", "")
+if tag:
+    tag = tag.lstrip("v")
+    if tag not in versions:
+        print(f"FAIL: Tag v{tag} does not match pack.mcmeta versions: {versions}")
+        print(f"  Update pack.mcmeta description to 'v{tag}' before releasing.")
+        sys.exit(1)
+    else:
+        print(f"PASSED: v{tag} matches pack.mcmeta.")
+PYEOF
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            TAG="${{ github.event.inputs.version }}"
-            TAG="${TAG#v}"
+            CHECK_TAG="${{ github.event.inputs.version }}" python3 /tmp/check_version.py
+          elif [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            CHECK_TAG="${GITHUB_REF#refs/tags/}" python3 /tmp/check_version.py
           else
-            TAG="${GITHUB_REF#refs/tags/v}"
+            python3 /tmp/check_version.py
           fi
 
-          TAG_ENV="$TAG" python3 << 'PYEOF'
-          import json, re, sys, os
-
-          tag = os.environ.get("TAG_ENV", "")
-
-          with open("pack.mcmeta") as f:
-            raw = json.dumps(json.load(f))
-
-          versions = re.findall(r'v(\d+\.\d+\.\d+)', raw)
-
-          if not versions:
-            print("⚠️  No version string found in pack.mcmeta.")
-          elif tag not in versions:
-            print(f"❌ Version v{tag} does not match pack.mcmeta: {versions}")
-            print(f"   Update pack.mcmeta description to 'v{tag}' before releasing.")
-            sys.exit(1)
-          else:
-            print(f"✅ Version v{tag} matches pack.mcmeta.")
-          PYEOF
-
-      - name: Check CHANGELOG for this version
+      - name: Check CHANGELOG
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             TAG="${{ github.event.inputs.version }}"
-          else
+          elif [[ "$GITHUB_REF" == refs/tags/* ]]; then
             TAG="${GITHUB_REF#refs/tags/}"
+          else
+            TAG=""
           fi
 
           if [ ! -f "docs/CHANGELOG.md" ]; then
-            echo "⚠️  docs/CHANGELOG.md not found — skipping."
+            echo "WARN: docs/CHANGELOG.md not found."
+          elif [ -z "$TAG" ]; then
+            echo "INFO: No tag to check in CHANGELOG."
           elif grep -q "$TAG" docs/CHANGELOG.md; then
-            echo "✅ $TAG found in CHANGELOG.md"
+            echo "OK: $TAG found in CHANGELOG.md"
           else
-            echo "⚠️  $TAG not found in docs/CHANGELOG.md — consider documenting this release."
+            echo "WARN: $TAG not in CHANGELOG.md — consider documenting this release."
           fi
 
   # ─────────────────────────────────────────────
@@ -345,26 +294,27 @@ jobs:
     needs: [ validate-json, validate-pack, validate-functions, validate-structure ]
     if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && github.event.inputs.create_release == 'true')
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Resolve version tag
+      - name: Resolve release tag
+        id: tag
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             TAG="${{ github.event.inputs.version }}"
             if [ -z "$TAG" ]; then
-              echo "❌ No version provided for manual release."
+              echo "FAIL: No version provided."
               exit 1
             fi
           else
             TAG="${GITHUB_REF#refs/tags/}"
           fi
-          echo "RELEASE_TAG=$TAG" >> $GITHUB_ENV
-          echo "✅ Release tag: $TAG"
+          echo "value=$TAG" >> $GITHUB_OUTPUT
+          echo "OK: Release tag = $TAG"
 
       - name: Build datapack ZIP
         run: |
-          ZIP_NAME="macroEngine-${{ env.RELEASE_TAG }}.zip"
+          TAG="${{ steps.tag.outputs.value }}"
+          ZIP_NAME="macroEngine-${TAG}.zip"
 
           zip -r "$ZIP_NAME" \
             data/ \
@@ -374,18 +324,17 @@ jobs:
             pack.mcmeta \
             pack.png
 
-          echo "ZIP_NAME=$ZIP_NAME" >> $GITHUB_ENV
-
           SIZE=$(du -sh "$ZIP_NAME" | cut -f1)
-          FILES=$(unzip -l "$ZIP_NAME" 2>/dev/null | tail -1 | awk '{print $2}') || FILES="?"
-          echo "✅ Built: $ZIP_NAME ($SIZE, $FILES files)"
+          echo "OK: Built $ZIP_NAME ($SIZE)"
+          echo "zip_name=$ZIP_NAME" >> $GITHUB_OUTPUT
+        id: build
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ env.RELEASE_TAG }}
-          name: "macroEngine ${{ env.RELEASE_TAG }}"
-          files: ${{ env.ZIP_NAME }}
+          tag_name: ${{ steps.tag.outputs.value }}
+          name: "macroEngine ${{ steps.tag.outputs.value }}"
+          files: ${{ steps.build.outputs.zip_name }}
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
