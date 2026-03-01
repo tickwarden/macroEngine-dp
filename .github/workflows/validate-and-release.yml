@@ -37,7 +37,7 @@ jobs:
             else
               echo "FAIL: $f"; jq . "$f" 2>&1 || true; FAILED=1
             fi
-          done < <(find data _pre_1_21_4 -1_21_4 1_21_6 -name "*.json" 2>/dev/null; echo "pack.mcmeta")
+          done < <(find data _pre_1_21_4 ./-1_21_4 1_21_6 -name "*.json" 2>/dev/null; echo "pack.mcmeta")
           [ $FAILED -ne 0 ] && { echo "FAILED: Invalid JSON files."; exit 1; } || echo "PASSED"
 
   # ─────────────────────────────────────────────
@@ -48,12 +48,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Check pack_format exists
+      - name: Check pack_format and description
         run: |
-          jq -e '.pack.pack_format' pack.mcmeta > /dev/null && echo "OK: pack_format = $(jq '.pack.pack_format' pack.mcmeta)" || { echo "FAIL: Missing pack_format"; exit 1; }
-          jq -e '.pack.description' pack.mcmeta > /dev/null && echo "OK: description present" || { echo "FAIL: Missing description"; exit 1; }
+          FAILED=0
+          PF=$(jq '.pack.pack_format // empty' pack.mcmeta)
+          [ -n "$PF" ] && echo "OK: pack_format = $PF" || { echo "FAIL: Missing pack_format"; FAILED=1; }
+          DESC=$(jq '.pack.description // empty' pack.mcmeta)
+          [ -n "$DESC" ] && echo "OK: description present" || { echo "FAIL: Missing description"; FAILED=1; }
           SF=$(jq '.pack.supported_formats // empty' pack.mcmeta)
           [ -n "$SF" ] && echo "OK: supported_formats = $SF" || true
+          [ $FAILED -ne 0 ] && exit 1 || echo "PASSED"
       - name: Check overlay directories exist
         run: |
           FAILED=0
@@ -77,24 +81,24 @@ jobs:
           while IFS= read -r tag_file; do
             while IFS= read -r ref; do
               [ -z "$ref" ] && continue
-              [[ "$ref" == \#* ]] && continue
+              [[ "$ref" == "#"* ]] && continue
               [[ "$ref" != *:* ]] && continue
               ns="${ref%%:*}"; path="${ref#*:}"
               found=0
-              for base in . _pre_1_21_4 -1_21_4 1_21_6; do
+              for base in . _pre_1_21_4 ./-1_21_4 1_21_6; do
                 [ -f "$base/data/$ns/function/$path.mcfunction" ] && found=1 && break
               done
               [ $found -eq 1 ] && echo "OK: $ref" || { echo "FAIL: $tag_file -> $ref not found"; FAILED=1; }
             done < <(jq -r '.values[]? | if type == "object" then .id else . end' "$tag_file" 2>/dev/null)
-          done < <(find data _pre_1_21_4 -1_21_4 1_21_6 -path "*/tags/function/*.json" 2>/dev/null)
+          done < <(find data _pre_1_21_4 ./-1_21_4 1_21_6 -path "*/tags/function/*.json" 2>/dev/null)
           [ $FAILED -ne 0 ] && { echo "FAILED"; exit 1; } || echo "PASSED"
       - name: Check for empty .mcfunction files
         run: |
           EMPTY=0
           while IFS= read -r f; do
-            content=$(grep -v '^\s*#' "$f" | grep -v '^\s*$' || true)
+            content=$(grep -v '^[[:space:]]*#' "$f" | grep -v '^[[:space:]]*$' || true)
             [ -z "$content" ] && { echo "WARN: Empty: $f"; EMPTY=$((EMPTY+1)); }
-          done < <(find data _pre_1_21_4 -1_21_4 1_21_6 -name "*.mcfunction" 2>/dev/null)
+          done < <(find data _pre_1_21_4 ./-1_21_4 1_21_6 -name "*.mcfunction" 2>/dev/null)
           [ $EMPTY -gt 0 ] && echo "WARN: $EMPTY empty files (may be intentional)" || echo "PASSED"
 
   # ─────────────────────────────────────────────
@@ -111,8 +115,8 @@ jobs:
           for f in pack.mcmeta pack.png; do
             [ -f "$f" ] && echo "OK: $f" || { echo "FAIL: $f missing"; FAILED=1; }
           done
-          for d in data _pre_1_21_4 -1_21_4 1_21_6; do
-            [ -d "$d" ] && echo "OK: $d/ ($(find "$d" -type f | wc -l) files)" || { echo "FAIL: $d/ missing"; FAILED=1; }
+          for d in data _pre_1_21_4 ./-1_21_4 1_21_6; do
+            [ -d "$d" ] && echo "OK: $d ($(find "$d" -type f | wc -l) files)" || { echo "FAIL: $d missing"; FAILED=1; }
           done
           for fn in "data/macro/function/load.mcfunction" "data/macro/function/tick.mcfunction" "data/minecraft/tags/function/load.json" "data/minecraft/tags/function/tick.json"; do
             [ -f "$fn" ] && echo "OK: $fn" || { echo "FAIL: $fn missing"; FAILED=1; }
@@ -132,7 +136,7 @@ jobs:
         run: |
           RAW=$(jq -c '.' pack.mcmeta)
           VER=$(echo "$RAW" | grep -oP 'v\d+\.\d+\.\d+' | head -1 || true)
-          [ -n "$VER" ] && echo "OK: pack.mcmeta version: $VER" || echo "WARN: No version string found in pack.mcmeta"
+          [ -n "$VER" ] && echo "OK: pack.mcmeta version: $VER" || echo "WARN: No version found in pack.mcmeta"
       - name: Check version matches tag
         if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && github.event.inputs.version != '')
         run: |
@@ -143,7 +147,7 @@ jobs:
           fi
           TAG="${TAG#v}"
           RAW=$(jq -c '.' pack.mcmeta)
-          if echo "$RAW" | grep -qP "v$TAG"; then
+          if echo "$RAW" | grep -qP "v${TAG}"; then
             echo "PASSED: v$TAG matches pack.mcmeta"
           else
             echo "FAIL: v$TAG not found in pack.mcmeta"; exit 1
@@ -187,7 +191,7 @@ jobs:
         run: |
           TAG="${{ steps.tag.outputs.value }}"
           ZIP="macroEngine-${TAG}.zip"
-          zip -r "$ZIP" data/ _pre_1_21_4/ -1_21_4/ 1_21_6/ pack.mcmeta pack.png
+          zip -r "$ZIP" data/ _pre_1_21_4/ ./-1_21_4/ 1_21_6/ pack.mcmeta pack.png
           echo "zip_name=$ZIP" >> $GITHUB_OUTPUT
           echo "OK: Built $ZIP ($(du -sh "$ZIP" | cut -f1))"
       - name: Create GitHub Release
