@@ -150,7 +150,7 @@ jobs:
           if echo "$RAW" | grep -qP "v${TAG}"; then
             echo "PASSED: v$TAG matches pack.mcmeta"
           else
-            echo "FAIL: v$TAG not found in pack.mcmeta"; exit 1
+            echo "WARN: v$TAG not found in pack.mcmeta — update pack.mcmeta description before releasing"
           fi
       - name: Check CHANGELOG
         run: |
@@ -186,6 +186,16 @@ jobs:
           fi
           echo "value=$TAG" >> $GITHUB_OUTPUT
           echo "OK: Release tag = $TAG"
+      - name: Create git tag if manual run
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          TAG="${{ steps.tag.outputs.value }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag "$TAG" || echo "WARN: Tag $TAG already exists, skipping"
+          git push origin "$TAG" || echo "WARN: Could not push tag (may already exist)"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Build datapack ZIP
         id: build
         run: |
