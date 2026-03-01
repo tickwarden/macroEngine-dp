@@ -36,5 +36,3 @@ execute if data storage macro:engine pb_obj run scoreboard players operation $pb
 execute if data storage macro:engine pb_obj run scoreboard players operation $pb_mod macro.tmp %= $pb_four macro.tmp
 execute if data storage macro:engine pb_obj run execute if score $pb_mod macro.tmp matches 0 run execute as @a run function macro:string/progress_bar_self with storage macro:engine {}
 
-scoreboard players remove @a macro.dialog_load 1
-execute as @a[scores={macro.dialog_load=0},tag=macro.dialog_closed] at @s run function macro:dialog/open

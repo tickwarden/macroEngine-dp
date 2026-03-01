@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:notice",
+  "title": {"text": ""},
+  "body": {
+    "type": "minecraft:plain_message",
+    "contents": {"text": "Yükleniyor..."}
+  },
+  "can_close_with_escape": false,
+  "pause": false,
+  "after_action": "none",
+  "action": {
+    "label": {"text": "İptal"},
+    "action": {
+      "type": "minecraft:run_command",
+      "command": "/function macro:dialog/close"
+    }
+  }
+}

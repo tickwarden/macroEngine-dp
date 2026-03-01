@@ -25,6 +25,7 @@ scoreboard objectives add macro.tmp dummy
 scoreboard objectives add macro.time dummy
 scoreboard objectives add macro_menu trigger
 scoreboard objectives add macro_run trigger
+scoreboard objectives add macro.dialog_load dummy
 
 # ─── Sayaçları başlat ────────────────────────────────────
 # Auto-HUD modulo sabiti
