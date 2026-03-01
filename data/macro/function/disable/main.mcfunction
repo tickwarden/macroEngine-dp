@@ -51,3 +51,9 @@ scoreboard objectives remove macro.tmp
 scoreboard objectives remove macro.time
 scoreboard objectives remove macro_menu
 scoreboard objectives remove macro_run
+# BUG FIX v1.0.1: macro.dialog_load objective silinmiyordu.
+scoreboard objectives remove macro.dialog_load
+
+# BUG FIX v1.0.1: Dialog tag'leri temizle (disable sonrası kalıntı kalmasın)
+tag @a remove macro.dialog_opened
+tag @a remove macro.dialog_closed

@@ -36,5 +36,14 @@ execute if data storage macro:engine pb_obj run scoreboard players operation $pb
 execute if data storage macro:engine pb_obj run scoreboard players operation $pb_mod macro.tmp %= $pb_four macro.tmp
 execute if data storage macro:engine pb_obj run execute if score $pb_mod macro.tmp matches 0 run execute as @a run function macro:string/progress_bar_self with storage macro:engine {}
 
-scoreboard players remove @a macro.dialog_load 1
+# BUG FIX v1.0.1: Yalnızca pozitif skorları azalt.
+# Önceden "@a" tüm oyuncuların skorunu azaltıyordu; skor 0'ı geçip -1, -2...
+# olduğunda "=0" koşulu bir daha eşleşmiyordu (race condition).
+# Artık skor 0'ın altına düşmez; tetikleyici her zaman çalışır.
+scoreboard players remove @a[scores={macro.dialog_load=1..}] macro.dialog_load 1
+
+# Süre doldu + loading dialog kapatıldıysa aç (macro:dialog/load ile kullanım)
 execute as @a[scores={macro.dialog_load=0},tag=macro.dialog_closed] at @s run function macro:dialog/open
+# BUG FIX v1.0.1: Doğrudan "/scoreboard players set @s macro.dialog_load N" kullanımı:
+# Tag hiç eklenmeden sadece skor ayarlandıysa da dialog açılsın.
+execute as @a[scores={macro.dialog_load=0},tag=!macro.dialog_closed,tag=!macro.dialog_opened] at @s run function macro:dialog/open
