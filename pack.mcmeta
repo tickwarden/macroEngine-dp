@@ -45,7 +45,7 @@
         "italic": false
       },
       {
-        "text": " | v1.0.0",
+        "text": " | v1.0.1",
         "color": "#ffaa00",
         "bold": false,
         "italic": false
@@ -62,7 +62,7 @@
     "block": [
       {
         "namespace": "macro",
-        "path": ".*\\\\.(txt|log|bak|tmp|js|tsx|sh|c|css|exe|jar|zip|apk|cmd|bat|py)$"
+        "path": ".*\\.(txt|log|bak|tmp|js|tsx|sh|c|css|exe|jar|zip|apk|cmd|bat|py)$"
       },
       {
         "namespace": "minecraft",
@@ -73,6 +73,13 @@
   "overlays": {
     "entries": [
       {
+        "directory": "_pre_1_21_4",
+        "formats": {
+          "min_inclusive": 48,
+          "max_inclusive": 57
+        }
+      },
+      {
         "directory": "-1_21_4",
         "formats": {
           "min_inclusive": 48,
@@ -80,6 +87,15 @@
         },
         "min_format": 48,
         "max_format": 61
+      },
+      {
+        "directory": "1_21_6",
+        "formats": {
+          "min_inclusive": 80,
+          "max_inclusive": 94
+        },
+        "min_format": 80,
+        "max_format": 94
       }
     ]
   }
