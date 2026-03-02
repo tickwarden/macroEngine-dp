@@ -7,11 +7,11 @@
 # - '/trigger macro_menu' çalışır
 # - '/trigger macro_run' çalışır
 # - '/trigger macro_action' → trigger/bind sistemi ile dispatch
-# - Auto-HUD: macro:engine pb_obj ayarlıysa progress_bar_self otomatik çalışır
-#   Aktif et  : data modify storage macro:engine pb_obj set value "health"
-#               data modify storage macro:engine pb_max set value 20
-#               data modify storage macro:engine pb_label set value "Can"
-#   Kapat     : data remove storage macro:engine pb_obj
+# - Auto-HUD: macro:engine pb_obj ayarlıysa progress_bar_self her tick otomatik çalışır
+# Aktif et : data modify storage macro:engine pb_obj set value "health"
+# data modify storage macro:engine pb_max set value 20
+# data modify storage macro:engine pb_label set value "Can"
+# Kapat : data remove storage macro:engine pb_obj
 # ============================================
 
 execute unless entity @a run return 0
@@ -37,8 +37,8 @@ scoreboard players enable @a[scores={macro_run=-1..}] macro_run
 # macro:input'e kesinlikle dokunulmaz (tick context güvenliği).
 execute as @a[scores={macro_action=1..}] run function macro:trigger/internal/dispatch
 
-# ── Auto-HUD: her 4 tick'te bir, pb_obj varsa progress_bar_self çalıştır ──
-# $epoch % 4 = 0 olan tick'lerde tetiklenir — ayrı sayaç yok, sıfırlama hatası yok
+# ── Auto-HUD: her tick, pb_obj varsa progress_bar_self çalıştır ──
+# $epoch % 1 = her zaman 0, yani sürekli çalışır — actionbar asla kaybolmaz
 execute if data storage macro:engine pb_obj run scoreboard players operation $pb_mod macro.tmp = $epoch macro.time
 execute if data storage macro:engine pb_obj run scoreboard players operation $pb_mod macro.tmp %= $pb_four macro.tmp
 execute if data storage macro:engine pb_obj run execute if score $pb_mod macro.tmp matches 0 run execute as @a run function macro:string/progress_bar_self with storage macro:engine {}
@@ -54,8 +54,3 @@ execute as @a[scores={macro.dialog_load=0},tag=macro.dialog_closed] at @s run fu
 # BUG FIX v1.0.1: Doğrudan "/scoreboard players set @s macro.dialog_load N" kullanımı:
 # Tag hiç eklenmeden sadece skor ayarlandıysa da dialog açılsın.
 execute as @a[scores={macro.dialog_load=0},tag=!macro.dialog_closed,tag=!macro.dialog_opened] at @s run function macro:dialog/open
-
-# ── Trigger Etkinleştir ──
-scoreboard players enable @a[tag=macro.admin] macro_menu
-scoreboard players enable @a[tag=macro.admin] macro_run
-scoreboard players enable @a[tag=macro.admin] macro_action

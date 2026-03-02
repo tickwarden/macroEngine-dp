@@ -7,10 +7,10 @@
 # - '/trigger macro_menu' çalışır
 # - '/trigger macro_run' çalışır
 # - Auto-HUD: macro:engine pb_obj ayarlıysa progress_bar_self otomatik çalışır
-#   Aktif et  : data modify storage macro:engine pb_obj set value "health"
-#               data modify storage macro:engine pb_max set value 20
-#               data modify storage macro:engine pb_label set value "Can"
-#   Kapat     : data remove storage macro:engine pb_obj
+# Aktif et : data modify storage macro:engine pb_obj set value "health"
+# data modify storage macro:engine pb_max set value 20
+# data modify storage macro:engine pb_label set value "Can"
+# Kapat : data remove storage macro:engine pb_obj
 # ============================================
 
 execute unless entity @a run return 0
@@ -29,6 +29,11 @@ scoreboard players enable @a[scores={macro_menu=-1..}] macro_menu
 execute as @a[scores={macro_run=1..}] run function #macro:run
 scoreboard players set @a[scores={macro_run=1..}] macro_run 0
 scoreboard players enable @a[scores={macro_run=-1..}] macro_run
+
+# ── Gelişmiş trigger dispatch (v1.0.3-pre) ───────────────────────────────
+# BUG FIX v1.0.3: Bu satır eksikti — 1.21.4 ve önceki sürümlerde macro_action
+# trigger sistemi hiç çalışmıyordu. Dialog kullanmadığı için buraya da gerekli.
+execute as @a[scores={macro_action=1..}] run function macro:trigger/internal/dispatch
 
 # ── Auto-HUD: her 4 tick'te bir, pb_obj varsa progress_bar_self çalıştır ──
 # $epoch % 4 = 0 olan tick'lerde tetiklenir — ayrı sayaç yok, sıfırlama hatası yok

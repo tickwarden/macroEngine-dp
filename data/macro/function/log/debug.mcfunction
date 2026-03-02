@@ -7,8 +7,8 @@
 #
 # INPUT: macro:input { message:"<metin>" }
 # ÇAĞIRIM:
-#   data modify storage macro:input message set value "tick: 12345"
-#   function macro:log/debug with storage macro:input {}
+# data modify storage macro:input message set value "tick: 12345"
+# function macro:log/debug with storage macro:input {}
 # ============================================
 
 $data modify storage macro:input message set value "$(message)"

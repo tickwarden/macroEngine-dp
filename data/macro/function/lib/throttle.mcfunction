@@ -6,19 +6,19 @@
 # dolana kadar DROP edilir (debounce'dan farkı budur).
 #
 # INPUT: macro:input { func:"<namespace:path>", delay:<tick>, interval:<tick>, key:"<id>" }
-#   delay    = kuyrukta bekletme (0 = hemen çalıştır)
-#   interval = minimum tick aralığı
-#   key      = throttle tanımlayıcısı (her throttle noktası için benzersiz)
+# delay = kuyrukta bekletme (0 = hemen çalıştır)
+# interval = minimum tick aralığı
+# key = throttle tanımlayıcısı (her throttle noktası için benzersiz)
 #
-# OUTPUT: —  (engellendiyse sessizce döner)
+# OUTPUT: — (engellendiyse sessizce döner)
 #
 # ÖRNEK:
-#   data modify storage macro:input func set value "mypack:ui/update_hud"
-#   data modify storage macro:input delay set value 0
-#   data modify storage macro:input interval set value 20
-#   data modify storage macro:input key set value "hud_update"
-#   function macro:lib/throttle with storage macro:input {}
-#   # → HUD en fazla saniyede 1 kez güncellenir
+# data modify storage macro:input func set value "mypack:ui/update_hud"
+# data modify storage macro:input delay set value 0
+# data modify storage macro:input interval set value 20
+# data modify storage macro:input key set value "hud_update"
+# function macro:lib/throttle with storage macro:input {}
+# # → HUD en fazla saniyede 1 kez güncellenir
 # ============================================
 
 # Mevcut throttle durumunu kontrol et

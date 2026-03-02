@@ -7,8 +7,8 @@
 # INPUT: macro:input { value:<int> }
 #
 # ÖRNEK:
-#   data modify storage macro:input value set value 1
-#   function macro:trigger/unbind with storage macro:input {}
+# data modify storage macro:input value set value 1
+# function macro:trigger/unbind with storage macro:input {}
 # ============================================
 
 execute unless data storage macro:engine trigger_binds run return 0

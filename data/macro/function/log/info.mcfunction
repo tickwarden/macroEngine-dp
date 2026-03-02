@@ -5,8 +5,8 @@
 #
 # INPUT: macro:input { message:"<metin>" }
 # ÇAĞIRIM:
-#   data modify storage macro:input message set value "Sunucu başlatıldı"
-#   function macro:log/info with storage macro:input {}
+# data modify storage macro:input message set value "Sunucu başlatıldı"
+# function macro:log/info with storage macro:input {}
 # ============================================
 
 $data modify storage macro:input message set value "$(message)"

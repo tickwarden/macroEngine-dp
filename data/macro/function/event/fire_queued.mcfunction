@@ -11,10 +11,10 @@
 # INPUT: macro:input { event:"<event_adi>", delay:<tick> }
 #
 # ORNEK:
-#   data modify storage macro:input event set value "on_round_end"
-#   data modify storage macro:input delay set value 60
-#   function macro:event/fire_queued with storage macro:input {}
-#   # 3 saniye sonra on_round_end tetiklenecek
+# data modify storage macro:input event set value "on_round_end"
+# data modify storage macro:input delay set value 60
+# function macro:event/fire_queued with storage macro:input {}
+# # 3 saniye sonra on_round_end tetiklenecek
 # ============================================
 
 # Event kayitli degilse kuyruga ekleme

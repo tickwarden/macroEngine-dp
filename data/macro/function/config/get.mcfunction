@@ -2,7 +2,7 @@
 # macro:config/get
 # ============================================
 # Config'den değer okur.
-# INPUT:  macro:input { key:"<anahtar>" }
+# INPUT: macro:input { key:"<anahtar>" }
 # OUTPUT: macro:output { result: <değer> | "" (yoksa) }
 # ============================================
 

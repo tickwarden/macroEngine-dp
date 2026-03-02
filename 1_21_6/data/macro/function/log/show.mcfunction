@@ -1,5 +1,5 @@
 # ============================================
-# macro:log/show  [1.21.6+ overlay]
+# macro:log/show [1.21.6+ overlay]
 # ============================================
 # log/show base ile aynı davranış — tellraw + for_each_list.
 # 1.21.6'da dialog body list compound'ları doğrudan

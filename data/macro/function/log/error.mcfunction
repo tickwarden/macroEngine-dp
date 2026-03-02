@@ -5,8 +5,8 @@
 #
 # INPUT: macro:input { message:"<metin>" }
 # ÇAĞIRIM:
-#   data modify storage macro:input message set value "Storage okunamadı"
-#   function macro:log/error with storage macro:input {}
+# data modify storage macro:input message set value "Storage okunamadı"
+# function macro:log/error with storage macro:input {}
 # ============================================
 
 $data modify storage macro:input message set value "$(message)"

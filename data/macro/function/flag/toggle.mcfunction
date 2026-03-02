@@ -4,12 +4,12 @@
 # Global bayrak tersine cevir.
 # Set ise unset olur; unset ise set olur.
 #
-# INPUT:  macro:input { key:"<bayrak_adi>" }
+# INPUT: macro:input { key:"<bayrak_adi>" }
 # OUTPUT: macro:output { result: 1b (yeni durum set) / 0b (yeni durum unset) }
 #
 # ORNEK:
-#   data modify storage macro:input key set value "pvp_enabled"
-#   function macro:flag/toggle with storage macro:input {}
+# data modify storage macro:input key set value "pvp_enabled"
+# function macro:flag/toggle with storage macro:input {}
 # ============================================
 
 # Mevcut durumu skora yukle: var=1, yok=0

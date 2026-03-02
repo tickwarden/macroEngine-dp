@@ -6,7 +6,7 @@
 # Birden fazla bind aynı değere sahipse hepsi çalışır.
 #
 # tick.mcfunction tarafından çağrılır:
-#   execute as @a[scores={macro_action=1..}] run function macro:trigger/internal/dispatch
+# execute as @a[scores={macro_action=1..}] run function macro:trigger/internal/dispatch
 # ============================================
 
 # Oyuncunun trigger değerini geçici olarak kaydet

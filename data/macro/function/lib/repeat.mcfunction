@@ -6,9 +6,9 @@
 #
 # INPUT: macro:input { func:"<namespace:path>", count:<int> }
 # ÖRNEK:
-#   data modify storage macro:input func set value "mypack:loop/step"
-#   data modify storage macro:input count set value 10
-#   function macro:lib/repeat with storage macro:input {}
+# data modify storage macro:input func set value "mypack:loop/step"
+# data modify storage macro:input count set value 10
+# function macro:lib/repeat with storage macro:input {}
 # ============================================
 
 $data modify storage macro:engine _repeat.func set value "$(func)"

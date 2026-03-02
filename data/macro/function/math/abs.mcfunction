@@ -2,7 +2,7 @@
 # macro:math/abs
 # ============================================
 # Mutlak değer: |value|
-# INPUT:  macro:input { value:<int> }
+# INPUT: macro:input { value:<int> }
 # OUTPUT: macro:output { result:<int> }
 # ============================================
 

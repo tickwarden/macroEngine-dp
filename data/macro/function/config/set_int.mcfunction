@@ -3,7 +3,7 @@
 # ============================================
 # Config'e tam sayı değer yazar.
 # String değerler için macro:config/set kullanın.
-# INPUT:  macro:input { key:"<anahtar>", value:<int> }
+# INPUT: macro:input { key:"<anahtar>", value:<int> }
 # OUTPUT: —
 # ============================================
 

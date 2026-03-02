@@ -2,7 +2,7 @@
 # macro:team/delete
 # ============================================
 # Takımı oyundan ve storage'dan siler.
-# INPUT:  macro:input { team:"<isim>" }
+# INPUT: macro:input { team:"<isim>" }
 # OUTPUT: —
 # ============================================
 

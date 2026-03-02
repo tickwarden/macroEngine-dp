@@ -2,12 +2,12 @@
 # macro:math/distance2d
 # ============================================
 # XZ düzleminde iki nokta arası mesafe: floor(√(dx² + dz²))
-# INPUT:  macro:input { x1:<int>, z1:<int>, x2:<int>, z2:<int> }
+# INPUT: macro:input { x1:<int>, z1:<int>, x2:<int>, z2:<int> }
 # OUTPUT: macro:output { result:<int> }
 #
 # Örnek: distance2d(0,0, 3,4) = 5
 # Not: macro:math/sqrt'ın binary search mantığı inline kullanılır;
-#      macro:input kirlenmez.
+# macro:input kirlenmez.
 # ============================================
 
 $scoreboard players set $d2d_x1 macro.tmp $(x1)

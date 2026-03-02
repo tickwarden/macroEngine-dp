@@ -8,8 +8,8 @@
 # INPUT: macro:input { key:"<schedule_id>" }
 #
 # ÖRNEK:
-#   data modify storage macro:input key set value "inactivity"
-#   function macro:lib/schedule_reset with storage macro:input {}
+# data modify storage macro:input key set value "inactivity"
+# function macro:lib/schedule_reset with storage macro:input {}
 # ============================================
 
 # Var mı kontrol et

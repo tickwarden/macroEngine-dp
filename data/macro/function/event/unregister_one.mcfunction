@@ -7,9 +7,9 @@
 # INPUT: macro:input { event:"<event_adı>", func:"<namespace:path>" }
 #
 # ÖRNEK:
-#   data modify storage macro:input event set value "on_join"
-#   data modify storage macro:input func set value "mypack:handlers/welcome"
-#   function macro:event/unregister_one with storage macro:input {}
+# data modify storage macro:input event set value "on_join"
+# data modify storage macro:input func set value "mypack:handlers/welcome"
+# function macro:event/unregister_one with storage macro:input {}
 #
 # NOT: Aynı fonksiyon birden fazla kez kayıtlıysa HEPSİ silinir.
 # ============================================

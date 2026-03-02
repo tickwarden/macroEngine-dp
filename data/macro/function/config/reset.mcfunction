@@ -2,7 +2,7 @@
 # macro:config/reset
 # ============================================
 # TÜM config değerlerini siler. ⚠️ Geri alınamaz!
-# INPUT:  —
+# INPUT: —
 # OUTPUT: —
 # ============================================
 

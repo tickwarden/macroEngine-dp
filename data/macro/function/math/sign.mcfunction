@@ -2,7 +2,7 @@
 # macro:math/sign
 # ============================================
 # Sayinin isaretini dondurur.
-# INPUT:  macro:input { value:<int> }
+# INPUT: macro:input { value:<int> }
 # OUTPUT: macro:output { result: -1 | 0 | 1 }
 # ============================================
 

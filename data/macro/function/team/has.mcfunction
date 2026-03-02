@@ -2,7 +2,7 @@
 # macro:team/has
 # ============================================
 # Oyuncu belirtilen takımda mı kontrol eder.
-# INPUT:  macro:input { team:"<isim>", player:"<oyuncu>" }
+# INPUT: macro:input { team:"<isim>", player:"<oyuncu>" }
 # OUTPUT: macro:output { result: 1b (evet) | 0b (hayır) }
 # ============================================
 

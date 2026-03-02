@@ -8,12 +8,12 @@
 # çağrıları iptal edilir. Schedule'lar (macro:engine schedules)
 # silinmez — onlar için schedule_cancel kullanın.
 #
-# INPUT:  (yok)
+# INPUT: (yok)
 # OUTPUT: (yok)
 #
 # ÖRNEK:
-#   # Oyun bitişinde bekleyen tüm işleri temizle
-#   function macro:lib/queue_clear
+# # Oyun bitişinde bekleyen tüm işleri temizle
+# function macro:lib/queue_clear
 # ============================================
 
 data remove storage macro:engine queue

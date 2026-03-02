@@ -2,7 +2,7 @@
 # macro:config/delete
 # ============================================
 # Config'den belirli bir key'i siler.
-# INPUT:  macro:input { key:"<anahtar>" }
+# INPUT: macro:input { key:"<anahtar>" }
 # OUTPUT: —
 # ============================================
 

@@ -2,8 +2,8 @@
 # macro:team/list
 # ============================================
 # Kayıtlı tüm takımları debug kanalına gösterir.
-# INPUT:  —
-# OUTPUT: —  (debug çıktısı)
+# INPUT: —
+# OUTPUT: — (debug çıktısı)
 # ============================================
 
 tellraw @a[tag=macro.debug] {"text":"[Team] -- Kayitli Takimlar --","color":"aqua"}

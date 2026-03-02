@@ -5,11 +5,11 @@
 # Doğrudan çağırmayın.
 #
 # Kullandigi scoreboard skorlari:
-#   $sqrt_n   - orijinal deger (sabit)
-#   $sqrt_lo  - binary search alt siniri
-#   $sqrt_hi  - binary search ust siniri
-#   $sqrt_itr - kalan iterasyon sayisi
-#   $sqrt_mid, $sqrt_sq, $sqrt_2 - gecici
+# $sqrt_n - orijinal deger (sabit)
+# $sqrt_lo - binary search alt siniri
+# $sqrt_hi - binary search ust siniri
+# $sqrt_itr - kalan iterasyon sayisi
+# $sqrt_mid, $sqrt_sq, $sqrt_2 - gecici
 # ============================================
 
 # mid = (lo + hi) / 2
@@ -22,7 +22,7 @@ scoreboard players operation $sqrt_mid macro.tmp /= $sqrt_2 macro.tmp
 scoreboard players operation $sqrt_sq macro.tmp = $sqrt_mid macro.tmp
 scoreboard players operation $sqrt_sq macro.tmp *= $sqrt_mid macro.tmp
 
-# mid^2 <= n -> lo = mid  |  mid^2 > n -> hi = mid
+# mid^2 <= n -> lo = mid | mid^2 > n -> hi = mid
 execute if score $sqrt_sq macro.tmp <= $sqrt_n macro.tmp run scoreboard players operation $sqrt_lo macro.tmp = $sqrt_mid macro.tmp
 execute unless score $sqrt_sq macro.tmp <= $sqrt_n macro.tmp run scoreboard players operation $sqrt_hi macro.tmp = $sqrt_mid macro.tmp
 

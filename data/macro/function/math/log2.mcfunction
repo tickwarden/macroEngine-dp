@@ -7,17 +7,17 @@
 # Algoritma: Bit shift benzetimi — değer 1'e düşene kadar 2'ye böl, sayacı artır.
 # 31 iterasyon yeterlidir (2^31 > INT_MAX).
 #
-# INPUT:  macro:input { value:<int> }
+# INPUT: macro:input { value:<int> }
 # OUTPUT: macro:output { result:<int> }
-#         result = -1 → value <= 0 (tanımsız)
+# result = -1 → value <= 0 (tanımsız)
 #
 # ÖRNEKLER:
-#   log2(1)   → 0
-#   log2(2)   → 1
-#   log2(4)   → 2
-#   log2(7)   → 2   (floor)
-#   log2(8)   → 3
-#   log2(1024)→ 10
+# log2(1) → 0
+# log2(2) → 1
+# log2(4) → 2
+# log2(7) → 2 (floor)
+# log2(8) → 3
+# log2(1024)→ 10
 # ============================================
 
 $scoreboard players set $lg2_v macro.tmp $(value)

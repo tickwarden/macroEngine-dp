@@ -6,7 +6,7 @@
 # Yalnızca aynı tick içinde @s'yi guard'dan muaf tutmak istediğinizde kullanın.
 #
 # ÖRNEK:
-#   execute as <oyuncu> run function macro:lib/tick_guard_clear
+# execute as <oyuncu> run function macro:lib/tick_guard_clear
 # ============================================
 
 scoreboard players set @s macro.tick_guard -1

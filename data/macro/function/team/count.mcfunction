@@ -2,7 +2,7 @@
 # macro:team/count
 # ============================================
 # Takımdaki online oyuncu sayısını döndürür.
-# INPUT:  macro:input { team:"<isim>" }
+# INPUT: macro:input { team:"<isim>" }
 # OUTPUT: macro:output { result:<int> }
 # ============================================
 

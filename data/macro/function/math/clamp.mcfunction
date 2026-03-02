@@ -2,7 +2,7 @@
 # macro:math/clamp
 # ============================================
 # Değeri [min, max] aralığına sıkıştırır.
-# INPUT:  macro:input { value:<int>, min:<int>, max:<int> }
+# INPUT: macro:input { value:<int>, min:<int>, max:<int> }
 # OUTPUT: macro:output { result:<int> }
 # ============================================
 

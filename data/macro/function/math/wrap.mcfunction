@@ -7,15 +7,15 @@
 #
 # Formül: min + ((value - min) % range + range) % range
 #
-# INPUT:  macro:input { value:<int>, min:<int>, max:<int> }
+# INPUT: macro:input { value:<int>, min:<int>, max:<int> }
 # OUTPUT: macro:output { result:<int> }
 #
 # ÖRNEKLER:
-#   wrap(value:11, min:0, max:10) → 1   (10'u geçince başa döner)
-#   wrap(value:-1, min:0, max:10) → 9   (0'ın altına inince sona döner)
-#   wrap(value:5,  min:0, max:10) → 5   (aralık içinde, değişmez)
-#   wrap(value:7,  min:3, max:8 ) → 7
-#   wrap(value:9,  min:3, max:8 ) → 4   (8'i geçince 3'ten devam eder)
+# wrap(value:11, min:0, max:10) → 1 (10'u geçince başa döner)
+# wrap(value:-1, min:0, max:10) → 9 (0'ın altına inince sona döner)
+# wrap(value:5, min:0, max:10) → 5 (aralık içinde, değişmez)
+# wrap(value:7, min:3, max:8 ) → 7
+# wrap(value:9, min:3, max:8 ) → 4 (8'i geçince 3'ten devam eder)
 # ============================================
 
 $scoreboard players set $wrap_v macro.tmp $(value)

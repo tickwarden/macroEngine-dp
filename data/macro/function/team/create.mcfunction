@@ -2,7 +2,7 @@
 # macro:team/create
 # ============================================
 # Yeni bir takım oluşturur ve storage'a kaydeder.
-# INPUT:  macro:input { team:"<isim>" }
+# INPUT: macro:input { team:"<isim>" }
 # OUTPUT: —
 #
 # Renk ve display için: macro:team/set_color, set_display

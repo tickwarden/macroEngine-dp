@@ -2,16 +2,16 @@
 # macro:math/sqrt
 # ============================================
 # Tamsayı karekök: floor(√value)
-# INPUT:  macro:input { value:<int> }
+# INPUT: macro:input { value:<int> }
 # OUTPUT: macro:output { result:<int> }
 #
-# Maksimum girdi: 2,147,395,600  (46340² ≈ 2³¹)
+# Maksimum girdi: 2,147,395,600 (46340² ≈ 2³¹)
 # Daha büyük değerler 46340 döndürür.
 #
 # Algoritma: Binary search, 16 iterasyon
-#   İnvaryant: lo² ≤ value < hi²
-#   Başlangıç:  lo=0, hi=min(value, 46341)
-#   16 adım → aralık 1'e düşer → lo = floor(√value)
+# İnvaryant: lo² ≤ value < hi²
+# Başlangıç: lo=0, hi=min(value, 46341)
+# 16 adım → aralık 1'e düşer → lo = floor(√value)
 # ============================================
 
 $scoreboard players set $sqrt_n macro.tmp $(value)

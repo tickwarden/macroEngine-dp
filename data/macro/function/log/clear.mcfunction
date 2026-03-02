@@ -5,7 +5,7 @@
 # log_display listesini sıfırlar, sayacı geri alır.
 #
 # ÇAĞIRIM:
-#   function macro:log/clear
+# function macro:log/clear
 # ============================================
 
 data modify storage macro:engine log_display set value []

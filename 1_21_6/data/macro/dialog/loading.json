@@ -11,7 +11,7 @@
   "action": {
     "label": {"text": "İptal"},
     "action": {
-      "type": "minecraft:run_command",
+      "type": "run_command",
       "command": "/function macro:dialog/close"
     }
   }

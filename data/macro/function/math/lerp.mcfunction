@@ -3,11 +3,11 @@
 # ============================================
 # Doğrusal interpolasyon: a + (b - a) * t / 100
 # t: 0..100 arası tam sayı yüzde
-# INPUT:  macro:input { a:<int>, b:<int>, t:<int> }
+# INPUT: macro:input { a:<int>, b:<int>, t:<int> }
 # OUTPUT: macro:output { result:<int> }
 #
 # Örnek: lerp(0, 100, 75) = 75
-#         lerp(10, 20, 50) = 15
+# lerp(10, 20, 50) = 15
 # ============================================
 
 $scoreboard players set $lerp_a macro.tmp $(a)

@@ -10,14 +10,14 @@
 # zayıftı. Sabit bir offset (0xDEAD = 57005) eklendi.
 # Ayrıca tick*31 ile ekstra entropi karıştırılıyor.
 #
-# INPUT:  macro:input { min:<int>, max:<int> }
+# INPUT: macro:input { min:<int>, max:<int> }
 # OUTPUT: macro:output { result:<int> }
 #
 # ÖRNEK:
-#   data modify storage macro:input min set value 1
-#   data modify storage macro:input max set value 6
-#   function macro:math/random with storage macro:input {}
-#   # → 1-6 arası zar sonucu
+# data modify storage macro:input min set value 1
+# data modify storage macro:input max set value 6
+# function macro:math/random with storage macro:input {}
+# # → 1-6 arası zar sonucu
 # ============================================
 
 $scoreboard players set $rnd_min macro.tmp $(min)
@@ -39,7 +39,7 @@ execute store result score $rnd_t macro.tmp run scoreboard players get $tick mac
 scoreboard players operation $rnd_t macro.tmp *= $rnd_tick macro.tmp
 scoreboard players operation $rnd macro.tmp += $rnd_t macro.tmp
 
-# LCG adımı: next = 1664525 * state + 1013904223  (Numerical Recipes)
+# LCG adımı: next = 1664525 * state + 1013904223 (Numerical Recipes)
 scoreboard players set $rnd_a macro.tmp 1664525
 scoreboard players operation $rnd macro.tmp *= $rnd_a macro.tmp
 scoreboard players add $rnd macro.tmp 1013904223

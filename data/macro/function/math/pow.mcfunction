@@ -6,14 +6,14 @@
 # Uyarı: büyük a ve n değerlerinde 32-bit taşma olur
 # (Minecraft scoreboard 32-bit signed).
 #
-# INPUT:  macro:input { a:<int>, n:<int> }   (n >= 0)
+# INPUT: macro:input { a:<int>, n:<int> } (n >= 0)
 # OUTPUT: macro:output { result:<int> }
 #
 # ÖRNEKLER:
-#   a:2, n:10  → 1024
-#   a:3, n:5   → 243
-#   a:7, n:0   → 1   (her sayının 0. kuvveti 1)
-#   a:0, n:0   → 1   (0^0 = 1 matematiksel tanım gereği)
+# a:2, n:10 → 1024
+# a:3, n:5 → 243
+# a:7, n:0 → 1 (her sayının 0. kuvveti 1)
+# a:0, n:0 → 1 (0^0 = 1 matematiksel tanım gereği)
 # ============================================
 
 $scoreboard players set $pow_a macro.tmp $(a)

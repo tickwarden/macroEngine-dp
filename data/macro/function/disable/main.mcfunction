@@ -30,6 +30,10 @@ data remove storage macro:engine cooldowns
 data remove storage macro:engine throttle
 # Oyuncu verileri
 data remove storage macro:engine players
+# BUG FIX v1.0.3: flags ve states load.mcfunction'da başlatılıyor ama
+# disable'da temizlenmiyordu → yeniden yüklemeden sonra kalıntı veriler kalıyordu.
+data remove storage macro:engine flags
+data remove storage macro:engine states
 # Schedule kayıtları
 data remove storage macro:engine schedules
 # Input stack + tekrar sayacı

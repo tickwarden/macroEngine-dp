@@ -2,7 +2,7 @@
 # macro:team/remove
 # ============================================
 # Oyuncuyu bulunduğu takımdan çıkarır.
-# INPUT:  macro:input { player:"<oyuncu>" }
+# INPUT: macro:input { player:"<oyuncu>" }
 # OUTPUT: —
 # ============================================
 

@@ -7,18 +7,18 @@
 #
 # Formül: out_min + (value - in_min) * (out_max - out_min) / (in_max - in_min)
 #
-# INPUT:  macro:input { value:<int>, in_min:<int>, in_max:<int>, out_min:<int>, out_max:<int> }
+# INPUT: macro:input { value:<int>, in_min:<int>, in_max:<int>, out_min:<int>, out_max:<int> }
 # OUTPUT: macro:output { result:<int> }
 #
 # ÖRNEK:
-#   # Oyuncunun canını (0-20) 0-100 arası yüzdeye çevir
-#   data modify storage macro:input value set value 14
-#   data modify storage macro:input in_min set value 0
-#   data modify storage macro:input in_max set value 20
-#   data modify storage macro:input out_min set value 0
-#   data modify storage macro:input out_max set value 100
-#   function macro:math/map with storage macro:input {}
-#   # → result = 70
+# # Oyuncunun canını (0-20) 0-100 arası yüzdeye çevir
+# data modify storage macro:input value set value 14
+# data modify storage macro:input in_min set value 0
+# data modify storage macro:input in_max set value 20
+# data modify storage macro:input out_min set value 0
+# data modify storage macro:input out_max set value 100
+# function macro:math/map with storage macro:input {}
+# # → result = 70
 # ============================================
 
 $scoreboard players set $map_v macro.tmp $(value)

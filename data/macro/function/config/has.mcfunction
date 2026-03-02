@@ -2,7 +2,7 @@
 # macro:config/has
 # ============================================
 # Belirtilen config key'i var mı kontrol eder.
-# INPUT:  macro:input { key:"<anahtar>" }
+# INPUT: macro:input { key:"<anahtar>" }
 # OUTPUT: macro:output { result: 1b (var) | 0b (yok) }
 # ============================================
 

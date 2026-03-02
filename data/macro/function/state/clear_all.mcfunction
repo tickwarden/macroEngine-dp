@@ -4,7 +4,7 @@
 # Tüm oyuncuların durumlarını siler.
 # Oyun sıfırlanırken veya round bitişinde kullanılır.
 #
-# INPUT:  (yok)
+# INPUT: (yok)
 # OUTPUT: (yok)
 # ============================================
 

@@ -5,14 +5,14 @@
 # Minecraft scoreboard'un % operatörü negatif değerler için negatif
 # sonuç döndürür; bu fonksiyon her zaman pozitif/sıfır verir.
 #
-# INPUT:  macro:input { value:<int>, divisor:<int> }
+# INPUT: macro:input { value:<int>, divisor:<int> }
 # OUTPUT: macro:output { result:<int> }
-#         divisor <= 0 ise result = 0 (güvenli çıkış)
+# divisor <= 0 ise result = 0 (güvenli çıkış)
 #
 # ÖRNEKLER:
-#   mod(7,  3) → 1
-#   mod(-1, 3) → 2   (Minecraft'ta -1 % 3 = -1, bu fonksiyon 2 döndürür)
-#   mod(9,  3) → 0
+# mod(7, 3) → 1
+# mod(-1, 3) → 2 (Minecraft'ta -1 % 3 = -1, bu fonksiyon 2 döndürür)
+# mod(9, 3) → 0
 # ============================================
 
 $scoreboard players set $mod_v macro.tmp $(value)

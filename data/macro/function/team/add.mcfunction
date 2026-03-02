@@ -2,7 +2,7 @@
 # macro:team/add
 # ============================================
 # Oyuncuyu takıma ekler.
-# INPUT:  macro:input { team:"<isim>", player:"<oyuncu>" }
+# INPUT: macro:input { team:"<isim>", player:"<oyuncu>" }
 # OUTPUT: —
 # ============================================
 

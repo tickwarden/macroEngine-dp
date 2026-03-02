@@ -2,7 +2,7 @@
 # macro:config/list
 # ============================================
 # Tüm config değerlerini debug kanalına gösterir.
-# INPUT:  —
+# INPUT: —
 # OUTPUT: — (debug çıktısı)
 # ============================================
 

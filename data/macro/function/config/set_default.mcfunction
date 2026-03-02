@@ -3,7 +3,7 @@
 # ============================================
 # Yalnızca key henüz yoksa string değer yazar.
 # Zaten varsa hiçbir şey yapmaz.
-# INPUT:  macro:input { key:"<anahtar>", value:"<değer>" }
+# INPUT: macro:input { key:"<anahtar>", value:"<değer>" }
 # OUTPUT: macro:output { result: 1b (yeni yazıldı) | 0b (zaten vardı) }
 # ============================================
 
