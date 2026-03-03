@@ -1,6 +1,16 @@
 # Advanced Macro Engine — Changelog
 
 ---
+## v1.0.3
+Rate-limit ve ek özellikler
+| Fonksiyon | Yetki kontrolü | Açıklama |
+|---|---|---|
+| `cmd/ban` | `Var` |
+| `cmd/op` | `Var` |
+| `cmd/deop` | `Var` |
+| `cmd/pardon` | `Var` |
+| `tools/utils/load_check` | `Yeni` |
+| `tools/utils/input_check` | Yeni |
 
 ## v1.0.3-pre
 
