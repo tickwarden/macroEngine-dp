@@ -1,6 +1,39 @@
 # Advanced Macro Engine — Changelog
 
 ---
+## v1.0.5 — 2026-03-05
+
+### 🐛 Bug Fixes
+
+#### `action` → `callback` — 1.21.4+ reserved keyword çakışması
+Minecraft 1.21.4 ile `action` kelimesi komut parser'ında rezerve keyword haline geldi. `data modify storage macro:input action` içeren tüm satırlar parse hatası üretiyordu (`Komut için geçersiz değişken`). Etkilenen 13 dosyada `action` storage key'i `callback` olarak yeniden adlandırıldı:
+
+| Dosya | Değişiklik |
+|---|---|
+| `lib/input_push.mcfunction` | Storage key: `action` → `callback` |
+| `lib/input_pop.mcfunction` | Storage key: `action` → `callback` |
+| `world/block_if`, `world/block_unless` | `$(action)` → `$(callback)` |
+| `inv/player_if_item`, `inv/player_unless_item`, `inv/player_slot_if_item` | `$(action)` → `$(callback)` |
+| `inv/chest_minecart_if_item`, `inv/chest_minecart_unless_item` | `$(action)` → `$(callback)` |
+| `geo/in_region`, `geo/in_region_unless`, `geo/near_entity`, `geo/near_entity_unless` | `$(action)` → `$(callback)` |
+
+> ⚠️ **Breaking change:** Kendi mapında `data modify storage macro:input action set value "..."` kullanan fonksiyonlar `callback` olarak güncellenmeli.
+
+#### `dialog/close` (base) — `return` sonrası ulaşılamaz kod
+Base namespace `dialog/close.mcfunction`'da `return run tellraw ...` satırından sonra gelen `tag @s remove macro.dialog_opened` ve `tag @s add macro.dialog_closed` satırları hiçbir zaman çalışmıyordu. `return` kaldırıldı; 1.21.1 fallback'te de engine tag durumu artık tutarlı biçimde temizleniyor.
+
+#### `1_21_6/dialog/load` — silinen `load_exec` referansı
+`1_21_6/dialog/load.mcfunction`, önceki bir temizlikte kaldırılan `macro:dialog/internal/load_exec` fonksiyonunu çağırıyordu. Her `macro:dialog/load` çağrısı 1.21.6+ sürümlerde `Unknown function` hatası üretiyordu. `load_exec` içeriği `load.mcfunction` içine inline edildi; ayrı dosyaya ihtiyaç kalmadı.
+
+#### `1_21_6/` overlay — artık silinmiş dosyaların kalıntıları
+`1_21_6/` overlay'inde ana `data/` namespace'den kaldırılmış olan `cmd/storage_get.mcfunction`, `cmd/other/internal/display.mcfunction` ve `dialog/internal/load_exec.mcfunction` dosyaları hâlâ duruyordu. Minecraft her iki katmandaki dosyaları birleştirerek yüklediğinden bu dosyalar silinmiş gibi davranmıyordu. Üçü de overlay'den kaldırıldı.
+
+### 🧹 Temizlik
+
+- Tüm `.mcfunction` dosyalarındaki hizalama amaçlı çoklu boşluklar tek boşluğa indirildi (yorum satırları korundu).
+
+---
+
 ## v1.0.5-pre3 — 2026-03-04
 
 ### 🐛 Bug Fixes
