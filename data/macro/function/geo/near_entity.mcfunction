@@ -21,8 +21,8 @@
 #   data modify storage macro:input type     set value "minecraft:villager"
 #   data modify storage macro:input tag      set value "quest_npc"
 #   data modify storage macro:input distance set value 3
-#   data modify storage macro:input callback   set value "function mymap:dialog/start"
+#   data modify storage macro:input action   set value "function mymap:dialog/start"
 #   function macro:geo/near_entity with storage macro:input {}
 # ============================================
 
-$execute as @a[name=$(player),limit=1] at @s if entity @e[type=$(type),tag=$(tag),distance=..$(distance),limit=1] run $(callback)
+$execute as @a[name=$(player),limit=1] at @s if entity @e[type=$(type),tag=$(tag),distance=..$(distance),limit=1] run $(action)

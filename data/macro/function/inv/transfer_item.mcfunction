@@ -23,4 +23,10 @@
 #   function macro:inv/transfer_item with storage macro:input {}
 # ============================================
 
-$execute as @a[name=$(player),limit=1] at @s run loot give @s mine entity @e[type=minecraft:chest_minecart,distance=..2,limit=1,tag=$(tag)] minecraft:empty_hand
+# BUG FIX v1.0.6-pre1: `loot give @s mine entity @e[...]` invalid syntax
+# (`mine` bir blok pozisyonu bekler, entity selector almaz).
+# Vanilla'da chest_minecart → player doğrudan slot transferi:
+# `item replace entity <player> <dest_slot> from entity <container> container.<slot>`
+# ⚠ Bu komut oyuncunun weapon.mainhand slotuna yazar.
+# Oyuncunun ana elinin boş olması önerilir; doluysa mevcut item silinir.
+$execute as @a[name=$(player),limit=1] at @s run item replace entity @s weapon.mainhand from entity @e[type=minecraft:chest_minecart,distance=..2,limit=1,tag=$(tag)] container.$(slot)

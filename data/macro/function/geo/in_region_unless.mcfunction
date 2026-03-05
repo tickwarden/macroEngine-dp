@@ -22,8 +22,8 @@
 #   data modify storage macro:input dx     set value 50
 #   data modify storage macro:input dy     set value 20
 #   data modify storage macro:input dz     set value 50
-#   data modify storage macro:input callback set value "tp @s 25 64 25"
+#   data modify storage macro:input action set value "tp @s 25 64 25"
 #   function macro:geo/in_region_unless with storage macro:input {}
 # ============================================
 
-$execute as @a[name=$(player),limit=1] unless entity @s[x=$(x),y=$(y),z=$(z),dx=$(dx),dy=$(dy),dz=$(dz)] run $(callback)
+$execute as @a[name=$(player),limit=1] unless entity @s[x=$(x),y=$(y),z=$(z),dx=$(dx),dy=$(dy),dz=$(dz)] run $(action)

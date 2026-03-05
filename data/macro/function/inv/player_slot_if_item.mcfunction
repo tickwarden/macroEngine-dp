@@ -19,8 +19,8 @@
 #   data modify storage macro:input player     set value "Steve"
 #   data modify storage macro:input slot       set value "weapon.mainhand"
 #   data modify storage macro:input customData set value "{id:\"mymap:magic_sword\"}"
-#   data modify storage macro:input callback     set value "effect give @s strength 5 2 true"
+#   data modify storage macro:input action     set value "effect give @s strength 5 2 true"
 #   function macro:inv/player_slot_if_item with storage macro:input {}
 # ============================================
 
-$execute as @a[name=$(player),limit=1] at @s if items entity @s $(slot) *[minecraft:custom_data=$(customData)] run $(callback)
+$execute as @a[name=$(player),limit=1] at @s if items entity @s $(slot) *[minecraft:custom_data=$(customData)] run $(action)

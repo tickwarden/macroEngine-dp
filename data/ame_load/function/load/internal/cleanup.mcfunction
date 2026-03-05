@@ -48,6 +48,9 @@ data remove storage macro:engine _tc_binds
 data remove storage macro:engine _tc_current
 data remove storage macro:engine _tc_unbind
 data remove storage macro:engine _tc_uval
+# BUG FIX v1.0.6-pre1: teams storage was never cleared on disable/reload.
+# team/create writes here; without this line data accumulates across reloads.
+data remove storage macro:engine teams
 # Config is preserved — so it survives reload
 data remove storage macro:engine global
 data remove storage macro:output result

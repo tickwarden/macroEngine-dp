@@ -93,33 +93,32 @@ data modify storage macro:engine _input_stack[-1].max_range set from storage mac
 
 # ─── inv/ modulu ─────────────────────────────────────────
 data modify storage macro:engine _input_stack[-1].customData set from storage macro:input customData
-data modify storage macro:engine _input_stack[-1].callback set from storage macro:input callback
+data modify storage macro:engine _input_stack[-1].action        set from storage macro:input action
 # ─── cmd/ eksik alanlar ──────────────────────────────────
-data modify storage macro:engine _input_stack[-1].slot set from storage macro:input slot
-data modify storage macro:engine _input_stack[-1].modifier set from storage macro:input modifier
-data modify storage macro:engine _input_stack[-1].operation set from storage macro:input operation
+data modify storage macro:engine _input_stack[-1].slot        set from storage macro:input slot
+data modify storage macro:engine _input_stack[-1].modifier    set from storage macro:input modifier
+data modify storage macro:engine _input_stack[-1].operation   set from storage macro:input operation
 data modify storage macro:engine _input_stack[-1].advancement set from storage macro:input advancement
-data modify storage macro:engine _input_stack[-1].json set from storage macro:input json
-data modify storage macro:engine _input_stack[-1].vehicle set from storage macro:input vehicle
-data modify storage macro:engine _input_stack[-1].feature set from storage macro:input feature
-data modify storage macro:engine _input_stack[-1].hide set from storage macro:input hide
+data modify storage macro:engine _input_stack[-1].json        set from storage macro:input json
+data modify storage macro:engine _input_stack[-1].vehicle     set from storage macro:input vehicle
+data modify storage macro:engine _input_stack[-1].feature     set from storage macro:input feature
+data modify storage macro:engine _input_stack[-1].hide        set from storage macro:input hide
 data modify storage macro:engine _input_stack[-1].damage_type set from storage macro:input damage_type
 # ─── tp_facing / title_sub ───────────────────────────────
-data modify storage macro:engine _input_stack[-1].fx set from storage macro:input fx
-data modify storage macro:engine _input_stack[-1].fy set from storage macro:input fy
-data modify storage macro:engine _input_stack[-1].fz set from storage macro:input fz
+data modify storage macro:engine _input_stack[-1].fx        set from storage macro:input fx
+data modify storage macro:engine _input_stack[-1].fy        set from storage macro:input fy
+data modify storage macro:engine _input_stack[-1].fz        set from storage macro:input fz
 data modify storage macro:engine _input_stack[-1].sub_color set from storage macro:input sub_color
 # ─── geo/ modulu ─────────────────────────────────────────
 data modify storage macro:engine _input_stack[-1].distance set from storage macro:input distance
 # ─── entity/ modulu ──────────────────────────────────────
-data modify storage macro:engine _input_stack[-1].filter set from storage macro:input filter
-data modify storage macro:engine _input_stack[-1].new_tag set from storage macro:input new_tag
+data modify storage macro:engine _input_stack[-1].filter     set from storage macro:input filter
+data modify storage macro:engine _input_stack[-1].new_tag    set from storage macro:input new_tag
 data modify storage macro:engine _input_stack[-1].remove_tag set from storage macro:input remove_tag
 # ─── world/ modulu ───────────────────────────────────────
-data modify storage macro:engine _input_stack[-1].expected set from storage macro:input expected
-data modify storage macro:engine _input_stack[-1].new_block set from storage macro:input new_block
+data modify storage macro:engine _input_stack[-1].expected    set from storage macro:input expected
+data modify storage macro:engine _input_stack[-1].new_block   set from storage macro:input new_block
 data modify storage macro:engine _input_stack[-1].replace_with set from storage macro:input replace_with
 
 # ─── entity/damage, entity/tp_to ────────────────────────
-data modify storage macro:engine _input_stack[-1].damage_type set from storage macro:input damage_type
-data modify storage macro:engine _input_stack[-1].amount set from storage macro:input amount
+# (damage_type and amount are already saved above under cmd/ and core fields respectively)

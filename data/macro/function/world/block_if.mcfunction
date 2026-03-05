@@ -21,8 +21,8 @@
 #   data modify storage macro:input y      set value 64
 #   data modify storage macro:input z      set value -5
 #   data modify storage macro:input block  set value "minecraft:lever[powered=true]"
-#   data modify storage macro:input callback set value "function mymap:door/open"
+#   data modify storage macro:input action set value "function mymap:door/open"
 #   function macro:world/block_if with storage macro:input {}
 # ============================================
 
-$execute if block $(x) $(y) $(z) $(block) run $(callback)
+$execute if block $(x) $(y) $(z) $(block) run $(action)

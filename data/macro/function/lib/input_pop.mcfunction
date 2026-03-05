@@ -79,7 +79,7 @@ data remove storage macro:input max_range
 
 # ─── Yeni modul alanlari (remove) ────────────────────────
 data remove storage macro:input customData
-data remove storage macro:input callback
+data remove storage macro:input action
 data remove storage macro:input slot
 data remove storage macro:input modifier
 data remove storage macro:input operation
@@ -100,8 +100,7 @@ data remove storage macro:input remove_tag
 data remove storage macro:input expected
 data remove storage macro:input new_block
 data remove storage macro:input replace_with
-data remove storage macro:input damage_type
-data remove storage macro:input amount
+# BUG FIX v1.0.6-pre1: duplicate damage_type and amount remove lines removed
 
 # ─── Restore from last stack element ─────────────────
 data modify storage macro:input player set from storage macro:engine _input_stack[-1].player
@@ -176,34 +175,34 @@ data modify storage macro:input max_range set from storage macro:engine _input_s
 
 # ─── inv/ modulu ─────────────────────────────────────────
 data modify storage macro:input customData set from storage macro:engine _input_stack[-1].customData
-data modify storage macro:input callback set from storage macro:engine _input_stack[-1].callback
+data modify storage macro:input action        set from storage macro:engine _input_stack[-1].action
 # ─── cmd/ eksik alanlar ──────────────────────────────────
-data modify storage macro:input slot set from storage macro:engine _input_stack[-1].slot
-data modify storage macro:input modifier set from storage macro:engine _input_stack[-1].modifier
-data modify storage macro:input operation set from storage macro:engine _input_stack[-1].operation
+data modify storage macro:input slot        set from storage macro:engine _input_stack[-1].slot
+data modify storage macro:input modifier    set from storage macro:engine _input_stack[-1].modifier
+data modify storage macro:input operation   set from storage macro:engine _input_stack[-1].operation
 data modify storage macro:input advancement set from storage macro:engine _input_stack[-1].advancement
-data modify storage macro:input json set from storage macro:engine _input_stack[-1].json
-data modify storage macro:input vehicle set from storage macro:engine _input_stack[-1].vehicle
-data modify storage macro:input feature set from storage macro:engine _input_stack[-1].feature
-data modify storage macro:input hide set from storage macro:engine _input_stack[-1].hide
+data modify storage macro:input json        set from storage macro:engine _input_stack[-1].json
+data modify storage macro:input vehicle     set from storage macro:engine _input_stack[-1].vehicle
+data modify storage macro:input feature     set from storage macro:engine _input_stack[-1].feature
+data modify storage macro:input hide        set from storage macro:engine _input_stack[-1].hide
 data modify storage macro:input damage_type set from storage macro:engine _input_stack[-1].damage_type
 # ─── tp_facing / title_sub ───────────────────────────────
-data modify storage macro:input fx set from storage macro:engine _input_stack[-1].fx
-data modify storage macro:input fy set from storage macro:engine _input_stack[-1].fy
-data modify storage macro:input fz set from storage macro:engine _input_stack[-1].fz
+data modify storage macro:input fx        set from storage macro:engine _input_stack[-1].fx
+data modify storage macro:input fy        set from storage macro:engine _input_stack[-1].fy
+data modify storage macro:input fz        set from storage macro:engine _input_stack[-1].fz
 data modify storage macro:input sub_color set from storage macro:engine _input_stack[-1].sub_color
 # ─── geo/ modulu ─────────────────────────────────────────
 data modify storage macro:input distance set from storage macro:engine _input_stack[-1].distance
 # ─── entity/ modulu ──────────────────────────────────────
-data modify storage macro:input filter set from storage macro:engine _input_stack[-1].filter
-data modify storage macro:input new_tag set from storage macro:engine _input_stack[-1].new_tag
+data modify storage macro:input filter     set from storage macro:engine _input_stack[-1].filter
+data modify storage macro:input new_tag    set from storage macro:engine _input_stack[-1].new_tag
 data modify storage macro:input remove_tag set from storage macro:engine _input_stack[-1].remove_tag
 # ─── world/ modulu ───────────────────────────────────────
-data modify storage macro:input expected set from storage macro:engine _input_stack[-1].expected
-data modify storage macro:input new_block set from storage macro:engine _input_stack[-1].new_block
+data modify storage macro:input expected     set from storage macro:engine _input_stack[-1].expected
+data modify storage macro:input new_block    set from storage macro:engine _input_stack[-1].new_block
 data modify storage macro:input replace_with set from storage macro:engine _input_stack[-1].replace_with
-data modify storage macro:input damage_type set from storage macro:engine _input_stack[-1].damage_type
-data modify storage macro:input amount set from storage macro:engine _input_stack[-1].amount
+# BUG FIX v1.0.6-pre1: duplicate damage_type and amount restore lines removed
+# (already restored above under cmd/ and core fields respectively)
 
 # ─── Pop last element from stack ─────────────────────────
 data remove storage macro:engine _input_stack[-1]

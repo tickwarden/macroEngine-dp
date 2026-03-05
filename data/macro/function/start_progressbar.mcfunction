@@ -19,7 +19,7 @@ data modify storage macro:engine pb_obj set value "health"
 data modify storage macro:engine pb_max set value 20
 data modify storage macro:engine pb_label set value "Health"
 
-# BUG FIX v1.0.5: Input override — reads from macro:input when provided
+# BUG FIX v1.0.6-pre1: Input override — reads from macro:input when provided
 # When called with "with storage macro:input {}" these lines
 # uses values from macro:input; if not called with storage, hardcoded defaults apply.
 execute if data storage macro:input pb_obj run data modify storage macro:engine pb_obj set from storage macro:input pb_obj

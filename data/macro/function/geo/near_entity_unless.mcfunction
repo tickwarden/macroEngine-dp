@@ -21,8 +21,8 @@
 #   data modify storage macro:input type     set value "minecraft:zombie"
 #   data modify storage macro:input tag      set value "arena_mob"
 #   data modify storage macro:input distance set value 20
-#   data modify storage macro:input callback   set value "function mymap:wave/next"
+#   data modify storage macro:input action   set value "function mymap:wave/next"
 #   function macro:geo/near_entity_unless with storage macro:input {}
 # ============================================
 
-$execute as @a[name=$(player),limit=1] at @s unless entity @e[type=$(type),tag=$(tag),distance=..$(distance),limit=1] run $(callback)
+$execute as @a[name=$(player),limit=1] at @s unless entity @e[type=$(type),tag=$(tag),distance=..$(distance),limit=1] run $(action)

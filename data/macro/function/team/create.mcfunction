@@ -10,7 +10,7 @@
 # ============================================
 
 $team add $(team)
-# BUG FIX v1.0.5: friendly_fire is now stored as string "true".
+# BUG FIX v1.0.6-pre1: friendly_fire is now stored as string "true".
 # Onceden 1b (bool) writeiliyordu; set_friendly_fire "$(value)" string writeiyordu.
 # Both are for storage purposes — the Minecraft team command accepts either.
 # Using the same format (string) as set_friendly_fire for consistency.

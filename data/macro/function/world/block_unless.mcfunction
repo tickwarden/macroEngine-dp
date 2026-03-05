@@ -20,8 +20,8 @@
 #   data modify storage macro:input y      set value 70
 #   data modify storage macro:input z      set value 0
 #   data modify storage macro:input block  set value "minecraft:barrier"
-#   data modify storage macro:input callback set value "say Bariyer yok!"
+#   data modify storage macro:input action set value "say Bariyer yok!"
 #   function macro:world/block_unless with storage macro:input {}
 # ============================================
 
-$execute unless block $(x) $(y) $(z) $(block) run $(callback)
+$execute unless block $(x) $(y) $(z) $(block) run $(action)

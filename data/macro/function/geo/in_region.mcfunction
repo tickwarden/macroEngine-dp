@@ -27,8 +27,8 @@
 #   data modify storage macro:input dx     set value 20
 #   data modify storage macro:input dy     set value 10
 #   data modify storage macro:input dz     set value 20
-#   data modify storage macro:input callback set value "say Bolgede!"
+#   data modify storage macro:input action set value "say Bolgede!"
 #   function macro:geo/in_region with storage macro:input {}
 # ============================================
 
-$execute as @a[name=$(player),limit=1,x=$(x),y=$(y),z=$(z),dx=$(dx),dy=$(dy),dz=$(dz)] run $(callback)
+$execute as @a[name=$(player),limit=1,x=$(x),y=$(y),z=$(z),dx=$(dx),dy=$(dy),dz=$(dz)] run $(action)

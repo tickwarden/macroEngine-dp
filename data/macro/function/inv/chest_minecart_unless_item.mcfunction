@@ -21,8 +21,8 @@
 #   data modify storage macro:input tag        set value "shop_cart_1"
 #   data modify storage macro:input slot       set value 0
 #   data modify storage macro:input customData set value "{id:\"mymap:payment\"}"
-#   data modify storage macro:input callback     set value "say Odeme alindi!"
+#   data modify storage macro:input action     set value "say Odeme alindi!"
 #   function macro:inv/chest_minecart_unless_item with storage macro:input {}
 # ============================================
 
-$execute as @a at @s unless items entity @e[type=minecraft:chest_minecart,distance=..2,limit=1,tag=$(tag)] container.$(slot) *[minecraft:custom_data=$(customData)] run $(callback)
+$execute as @a at @s unless items entity @e[type=minecraft:chest_minecart,distance=..2,limit=1,tag=$(tag)] container.$(slot) *[minecraft:custom_data=$(customData)] run $(action)

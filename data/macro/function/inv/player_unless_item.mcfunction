@@ -17,8 +17,8 @@
 # EXAMPLE:
 #   data modify storage macro:input player     set value "Steve"
 #   data modify storage macro:input customData set value "{id:\"mymap:quest_scroll\"}"
-#   data modify storage macro:input callback     set value "say Scroll'u kaybettin!"
+#   data modify storage macro:input action     set value "say Scroll'u kaybettin!"
 #   function macro:inv/player_unless_item with storage macro:input {}
 # ============================================
 
-$execute as @a[name=$(player),limit=1] at @s unless items entity @s *.* *[minecraft:custom_data=$(customData)] run $(callback)
+$execute as @a[name=$(player),limit=1] at @s unless items entity @s *.* *[minecraft:custom_data=$(customData)] run $(action)

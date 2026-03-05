@@ -5,7 +5,7 @@ data modify storage macro:output data set from storage macro:engine
 execute unless data storage macro:output data.global{loaded:1b} run return 0
 
 # Version Check
-execute unless data storage macro:output data.global{version:"V1.0.5"} run return 0
+execute unless data storage macro:output data.global{version:"V1.0.6-pre1"} run return 0
 
 # ───── /op ─────
 execute if data storage macro:output inputs{func:"macro:cmd/op"} run return 0

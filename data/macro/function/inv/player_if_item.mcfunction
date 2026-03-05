@@ -17,8 +17,8 @@
 # EXAMPLE:
 #   data modify storage macro:input player     set value "Steve"
 #   data modify storage macro:input customData set value "{id:\"mymap:vip_card\"}"
-#   data modify storage macro:input callback     set value "gamemode creative @s"
+#   data modify storage macro:input action     set value "gamemode creative @s"
 #   function macro:inv/player_if_item with storage macro:input {}
 # ============================================
 
-$execute as @a[name=$(player),limit=1] at @s if items entity @s *.* *[minecraft:custom_data=$(customData)] run $(callback)
+$execute as @a[name=$(player),limit=1] at @s if items entity @s *.* *[minecraft:custom_data=$(customData)] run $(action)
