@@ -17,7 +17,7 @@
 # redstone_block pattern. Fixed to use absolute coords matching the overlay versions.
 # Z=1601 : success slot (Z=1600 = version conflict, see version_warn)
 setblock -30000000 0 1601 minecraft:test_block[mode=log]{mode:"log",message:"✅ [AME] v1.0.6-pre3 loaded successfully."}
-
+setblock -30000000 0 1601 minecraft:redstone_block
 
 # ─── Admin summary (macro.debug tag) ─────────────────────
 tellraw @a[tag=macro.debug] ["",{"text":"[AME] ","color":"aqua","bold":true},{"text":"v1.0.6-pre3 ","color":"green","bold":true},{"text":"ready · ame.pre_version → ","color":"dark_gray"},{"score":{"name":"#ame.major","objective":"ame.pre_version"},"color":"yellow"},{"text":".","color":"dark_gray"},{"score":{"name":"#ame.minor","objective":"ame.pre_version"},"color":"yellow"},{"text":".","color":"dark_gray"},{"score":{"name":"#ame.patch","objective":"ame.pre_version"},"color":"yellow"}]
@@ -30,3 +30,5 @@ function macro:log/add with storage macro:input {}
 data remove storage macro:input message
 data remove storage macro:input level
 data remove storage macro:input color
+
+forceload add -30000000 1600
