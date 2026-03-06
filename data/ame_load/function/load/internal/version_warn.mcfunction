@@ -18,6 +18,7 @@
 # redstone_block pattern. Fixed to use absolute coords matching the overlay versions.
 # Z=1600 : version conflict slot (Z=1601 = success, see finalize)
 setblock -30000000 0 1600 minecraft:test_block[mode=log]{mode:"log",message:"❌ [AME] Version conflict detected. Expected v1.0.6-pre3. Run /reload in-game for details."}
+setblock -30000000 0 1600 minecraft:redstone_block
 
 # ─── Broadcast warning (all players) ──────────────────────
 tellraw @a ["",{"text":"❌ ","color":"red"},{"text":"[AME] ","color":"aqua","bold":true},{"text":"Version conflict! ","color":"red","bold":true},{"text":"Expected ","color":"gray"},{"text":"v1.0.6-pre3","color":"yellow","bold":true},{"text":" — stored scores do not match.","color":"gray"}]
