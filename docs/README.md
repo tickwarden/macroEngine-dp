@@ -1,4 +1,4 @@
-# 🔧 Advanced Macro Engine — v3.2
+# 🔧 Advanced Macro Engine — v1.0.5
 **Minecraft Java Edition 1.21.x | Multiplayer-Safe | Pure Datapack**
 
 ---
