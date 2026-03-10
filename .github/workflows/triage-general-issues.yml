@@ -1,0 +1,142 @@
+name: Triage General-Labeled Issues
+
+on:
+  issues:
+    types: [labeled, opened, reopened]
+  schedule:
+    - cron: '0 9 * * *' # Her gün 09:00 UTC'de çalışır (stale kontrolü)
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  triage-general-issue:
+    name: Triage or close stale 'general' issues
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Handle 'general' labeled issues
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const STALE_DAYS = 7;
+            const TRIAGE_LABEL = 'general';
+            const STALE_MARKER = '<!-- general-triage-warning -->';
+
+            // ── Zamanlayıcı: stale kontrol ──────────────────────────────────────
+            if (context.eventName === 'schedule' || context.eventName === 'workflow_dispatch') {
+              console.log(`Stale kontrol: '${TRIAGE_LABEL}' etiketli açık issue'lar taranıyor...`);
+
+              const { data: issues } = await github.rest.issues.listForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                labels: TRIAGE_LABEL,
+                state: 'open',
+                per_page: 100,
+              });
+
+              const now = new Date();
+
+              for (const iss of issues) {
+                // Uyarı yorumunu bul
+                const { data: comments } = await github.rest.issues.listComments({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: iss.number,
+                });
+
+                const warningComment = comments.find(c => c.body.includes(STALE_MARKER));
+
+                if (!warningComment) {
+                  console.log(`Issue #${iss.number}: Henüz uyarı yok, atlanıyor.`);
+                  continue;
+                }
+
+                const warningDate = new Date(warningComment.created_at);
+                const diffDays = (now - warningDate) / (1000 * 60 * 60 * 24);
+
+                console.log(`Issue #${iss.number}: Uyarıdan bu yana ${diffDays.toFixed(1)} gün geçti.`);
+
+                if (diffDays >= STALE_DAYS) {
+                  await github.rest.issues.createComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: iss.number,
+                    body: [
+                      "## ⏰ Issue Otomatik Kapatıldı",
+                      "",
+                      `${STALE_DAYS} gün içinde daha spesifik bir etiketle güncellenmediği için bu issue kapatıldı.`,
+                      "",
+                      "Konuyu yeniden açmak veya doğru etiketle güncellemek istiyorsanız bir proje sorumlusuyla iletişime geçin.",
+                    ].join('\n'),
+                  });
+
+                  await github.rest.issues.update({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: iss.number,
+                    state: 'closed',
+                    state_reason: 'not_planned',
+                  });
+
+                  console.log(`🔒 Issue #${iss.number} ${STALE_DAYS} gün sonra kapatıldı.`);
+                }
+              }
+              return;
+            }
+
+            // ── Normal event: label eklendi / issue açıldı ──────────────────────
+            const issue = context.payload.issue;
+            const labels = issue.labels.map(l => l.name);
+
+            if (!labels.includes(TRIAGE_LABEL)) {
+              console.log("'general' etiketi yok, işlem yapılmıyor.");
+              return;
+            }
+
+            if (issue.state === 'closed') {
+              console.log(`Issue #${issue.number} zaten kapalı.`);
+              return;
+            }
+
+            // Daha önce uyarı bırakıldı mı?
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+            });
+
+            const alreadyWarned = comments.some(c => c.body.includes(STALE_MARKER));
+
+            if (alreadyWarned) {
+              console.log(`Issue #${issue.number} için zaten uyarı bırakılmış.`);
+              return;
+            }
+
+            console.log(`Issue #${issue.number} için triage uyarısı bırakılıyor...`);
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: [
+                `${STALE_MARKER}`,
+                "## 🏷️ Bu issue daha spesifik bir etiket gerektiriyor",
+                "",
+                "Bu issue **`general`** etiketiyle işaretlenmiş. Daha hızlı ilgilenebilmemiz için aşağıdaki etiketlerden birini kullanmanızı öneririz:",
+                "",
+                "| Etiket | Ne zaman kullanılır? |",
+                "|---|---|",
+                "| `bug` | Bir şey beklendiği gibi çalışmıyor |",
+                "| `enhancement` | Yeni özellik veya iyileştirme önerisi |",
+                "| `documentation` | Dokümantasyon eksik veya hatalı |",
+                "| `help wanted` | Yardım veya görüş isteniyor |",
+                "| `question` | Teknik bir soru |",
+                "",
+                `> ⏰ **${STALE_DAYS} gün** içinde etiket güncellenmezse bu issue otomatik olarak kapatılacaktır.`,
+              ].join('\n'),
+            });
+
+            console.log(`✅ Issue #${issue.number} için triage uyarısı bırakıldı.`);
