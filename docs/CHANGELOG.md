@@ -2,6 +2,73 @@
 
 ---
 
+## v2.0.0 — 2026-03-10
+
+### ✨ Yeni: `perm/` Modülü — İzin Sistemi
+
+Oyuncu izinlerini yönetmek için tam bir permission katmanı. İki katlı mimaride çalışır: **storage** (kalıcı, offline dahil) + **entity tag** (runtime hızlı erişim). `macro.admin` tag tüm izinleri bypass eder.
+
+#### Temel Fonksiyonlar
+
+| Fonksiyon | Input | Açıklama |
+|---|---|---|
+| `perm/grant` | `{player, perm}` | İzin ver — storage + tag |
+| `perm/revoke` | `{player, perm}` | İzin al — storage + tag temizle |
+| `perm/clear` | `{player}` | Tüm izinleri sil |
+| `perm/has` | `{player, perm}` | İzin kontrolü → `macro:output {result:1b/0b}` |
+| `perm/check` | `{player, perm}` | Guard — izin yoksa `return 0` |
+| `perm/run` | `{player, perm, cmd}` | İzinli komut çalıştır (entity tag tabanlı, online) |
+| `perm/exec` | `{player, perm, cmd}` | İzinli komut çalıştır (storage tabanlı, offline dahil) |
+| `perm/list` | `{player}` | `macro.debug` tag'li oyunculara izin listesini yazdır |
+
+> `grant`, `revoke`, `clear` sadece `macro.admin` tag'li oyuncu tarafından çağrılabilir.
+
+> `perm/run` ile `perm/exec` farkı: `run` entity tag'e bakar (hızlı), `exec` storage'a bakar (güvenilir/offline).
+
+---
+
+### ✨ Yeni: `perm/trigger/` Alt Sistemi — İzin Korumalı İsimli Trigger'lar
+
+Oyuncuların `/trigger <name> set <value>` yazmasına izin verir; arka planda izin kontrolü yaparak bağlı fonksiyon veya komutu çalıştırır. `macro_action` sisteminin izin katmanlı genişlemesi.
+
+| Fonksiyon | Input | Açıklama |
+|---|---|---|
+| `perm/trigger/bind` | `{name, value, func, perm}` | Trigger değerini fonksiyona bağla |
+| `perm/trigger/bind_cmd` | `{name, value, cmd, perm}` | Trigger değerini komuta bağla |
+| `perm/trigger/enable` | `{player, name, perm}` | Trigger'ı oyuncu için aktif et (izin kontrolü ile) |
+| `perm/trigger/unbind` | `{name, value}` | Belirli value'nun tüm bind'larını kaldır |
+| `perm/trigger/clear` | `{name}` | Trigger'ın tüm bind'larını temizle |
+
+Storage: `macro:engine perm_triggers.<name> [{value:N, func/cmd:"...", perm:"..."}]`  
+Trigger isimleri: `macro:engine perm_trigger_names [{name:"..."}]`
+
+**Tick dispatch:** `tick/player_systems` → `perm/trigger/internal/tick_start` → `tick_step_loop` → `tick_dispatch` → `player_dispatch` → `check_bind` → `run_if_perm` → `exec`
+
+**İzin akışı:** Oyuncu `/trigger <name> set N` yazar → `player_dispatch` skoru sıfırlar ve yeniden enable eder → `run_if_perm` `macro.admin` veya `perm.<perm>` tag kontrolü yapar → izin varsa bind çalışır, yoksa oyuncuya hata mesajı gönderilir.
+
+---
+
+### 🐛 Bug Fixes
+
+#### `perm/list` — satır 16 gereksiz `$` prefix
+Son `tellraw` satırında `$(...)` değişkeni olmaksızın `$` prefix yazılmıştı; Minecraft "No variables in macro" hatası üretiyordu. `$` kaldırıldı.
+
+#### `perm/trigger/internal/run_if_perm` — satır 14 gereksiz `$` prefix
+`execute if entity @s[tag=macro.admin]` satırında `$(...)` değişkeni yokken `$` prefix bulunuyordu; "No variables in macro" hatası üretiyordu. `$` kaldırıldı.
+
+#### `perm/trigger/internal/tick_step_loop` — `with storage ... {}` geçersiz syntax
+`function macro:perm/trigger/internal/tick_dispatch with storage macro:engine _pt_tick_ctx {}` satırındaki sondaki `{}` geçersizdi; parse hatası üretiyordu. `{}` kaldırıldı.
+
+---
+
+### ⚙️ Değişiklikler
+
+- `tick/player_systems.mcfunction`: `perm/trigger/internal/tick_start` dispatch satırı eklendi
+- `load.mcfunction`: `perm_triggers`, `perm_trigger_names`, `permissions` storage init eklendi (yeni objective yok — scoreboard'lar `perm/trigger/bind` tarafından lazy oluşturuluyor)
+- `disable/main.mcfunction`: `perm_triggers`, `perm_trigger_names`, `permissions` storage temizleme eklendi
+
+---
+
 ## v1.0.6-pre4-fix3
 - Hata düzeltmeleri ve iyileştirmeler
 
