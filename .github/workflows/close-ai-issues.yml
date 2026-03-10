@@ -1,0 +1,52 @@
+name: Auto-Close AI-Labeled Issues
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  close-ai-issue:
+    name: Close issue if labeled 'ai'
+    runs-on: ubuntu-latest
+
+    # Sadece 'ai' etiketi eklendiğinde çalış
+    if: github.event.label.name == 'ai'
+
+    permissions:
+      issues: write
+
+    steps:
+      - name: Close the issue
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issue = context.payload.issue;
+            const label = context.payload.label.name;
+
+            console.log(`Issue #${issue.number} - "${issue.title}" → '${label}' etiketi eklendi. Kapatılıyor...`);
+
+            // Issue'ya kapanış yorumu bırak
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: [
+                "## 🤖 Bu issue otomatik olarak kapatıldı.",
+                "",
+                "Bu issue **`ai`** etiketiyle işaretlendiği için otomatik kapatma iş akışı tarafından kapatıldı.",
+                "",
+                "Eğer bu bir hata olduğunu düşünüyorsanız, lütfen bir proje sorumlusuyla iletişime geçin.",
+              ].join("\n"),
+            });
+
+            // Issue'yu kapat
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              state: "closed",
+              state_reason: "not_planned",
+            });
+
+            console.log(`✅ Issue #${issue.number} başarıyla kapatıldı.`);
