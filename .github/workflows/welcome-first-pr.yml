@@ -1,0 +1,56 @@
+name: Welcome First-Time PR Contributors
+
+on:
+  pull_request_target:
+    types: [opened]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  welcome:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pr = context.payload.pull_request;
+            const sender = pr.user.login;
+
+            // Bu kullanıcının daha önceki PR'larını kontrol et
+            const { data: prs } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'all',
+              per_page: 100,
+            });
+
+            const previousPRs = prs.filter(
+              p => p.user.login === sender && p.number !== pr.number
+            );
+
+            if (previousPRs.length > 0) {
+              console.log(`@${sender} daha önce PR açmış (${previousPRs.length} adet), selamlama atlanıyor.`);
+              return;
+            }
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              body: [
+                `## 🎉 Hoş Geldin, @${sender}!`,
+                "",
+                "macroEngine-dp'ye ilk PR'ını açtığın için teşekkürler! Katkın incelemeye alındı.",
+                "",
+                "Süreci hızlandırmak için şunlara dikkat edebilirsin:",
+                "- Değişikliğini test ettiğin Minecraft Java Edition sürümünü belirt",
+                "- Eğer bir issue'yu çözüyorsa PR açıklamasına `closes #<issue_no>` ekle",
+                "- `.mcfunction` dosyalarında sözdizimi hatası olmadığından emin ol",
+                "",
+                "Herhangi bir sorun olursa buraya yorum bırakabilirsin. İyi kodlamalar! 🧱",
+              ].join('\n'),
+            });
+
+            console.log(`✅ @${sender} selamlandı.`);

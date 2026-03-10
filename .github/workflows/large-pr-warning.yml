@@ -1,0 +1,94 @@
+name: Large PR Warning
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  large-pr-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const MARKER = '<!-- large-pr-warning -->';
+
+            // pr.additions/deletions payload'da synchronize event'te gelmez, API'den çek
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+            });
+
+            const additions = pr.additions;
+            const deletions = pr.deletions;
+            const changedFiles = pr.changed_files;
+            const total = additions + deletions;
+
+            // Eşik değerleri
+            const WARN_LINES = 300;
+            const WARN_FILES = 15;
+
+            const isTooLarge = total > WARN_LINES || changedFiles > WARN_FILES;
+
+            // Mevcut uyarı yorumunu bul
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+            });
+
+            const existingWarning = comments.find(c => c.body.includes(MARKER));
+
+            if (!isTooLarge) {
+              // Büyüklük düştüyse eski uyarıyı sil
+              if (existingWarning) {
+                await github.rest.issues.deleteComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: existingWarning.id,
+                });
+                console.log('PR küçüldü, uyarı kaldırıldı.');
+              }
+              console.log(`PR boyutu normal (${total} satır, ${changedFiles} dosya).`);
+              return;
+            }
+
+            const warningBody = [
+              MARKER,
+              "## ⚠️ Büyük PR Uyarısı",
+              "",
+              `Bu PR **${changedFiles} dosya** ve toplam **${total} satır** değişiklik (\`+${additions}\` / \`-${deletions}\`) içeriyor.`,
+              "",
+              "Büyük PR'lar incelenmesi daha uzun sürer ve çakışma riski taşır. Mümkünse:",
+              "",
+              "- [ ] PR'ı daha küçük, mantıksal parçalara bölmeyi düşünün",
+              "- [ ] Her PR tek bir amaç/özellik içersin (`functions/` değişiklikleri ayrı, `tags/` değişiklikleri ayrı)",
+              "- [ ] Refactor ile özellik eklemesini aynı PR'da yapmaktan kaçının",
+              "",
+              `> Eşik: **${WARN_LINES} satır** veya **${WARN_FILES} dosya** üzeri uyarı tetikler.`,
+            ].join('\n');
+
+            if (existingWarning) {
+              // Mevcut uyarıyı güncelle
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingWarning.id,
+                body: warningBody,
+              });
+              console.log('Mevcut uyarı güncellendi.');
+            } else {
+              // Yeni uyarı bırak
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                body: warningBody,
+              });
+              console.log(`⚠️ Büyük PR uyarısı bırakıldı (${total} satır, ${changedFiles} dosya).`);
+            }
