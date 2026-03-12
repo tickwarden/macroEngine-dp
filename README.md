@@ -1,4 +1,4 @@
-# 🔧 Advanced Macro Engine — v2.0.1
+# 🔧 Advanced Macro Engine — v2.0.3-pre1
 **Minecraft Java Edition 1.21.x | Multiplayer-Safe | Pure Datapack**
 
 ---
@@ -36,7 +36,7 @@ sha256sum datapack.zip
 ```
 macro:engine  (kalıcı veri)
 ├── global
-│   ├── version: "3.0"
+│   ├── version: "v2.0.3-pre1"
 │   └── tick: <int>
 ├── players
 │   └── Steve { coins:150, level:5, xp:2300, online:1b, ... }
