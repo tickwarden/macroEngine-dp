@@ -29,7 +29,7 @@ execute if data storage macro:engine global{loaded:1b} run return 0
 
 # ─── Storage version check ───────────────────────────────
 # BUG FIX v2.0.0: Fallback message was stale "V1.0.6-pre4". Now reflects actual version.
-execute unless data storage macro:engine global{version:"v2.0.3-pre3"} run data modify storage macro:names temp.vers set value "V2.0.3-pre2"
+execute unless data storage macro:engine global{version:"v2.0.3-pre3"} run data modify storage macro:names temp.vers set value "V2.0.3-pre3"
 execute unless data storage macro:engine global{version:"v2.0.3-pre3"} run tellraw @a [{"text":"[AME] ","color":"aqua","bold":true},{"text":"Version mismatch — expected ","color":"red"},{"storage":"macro:names","nbt":"temp.vers","color":"yellow"},{"text":".","color":"red"}]
 execute unless data storage macro:engine global{version:"v2.0.3-pre3"} run return 0
 
@@ -45,7 +45,7 @@ scoreboard players set #ame.mismatch ame.pre_version 0
 execute if score #ame.ver_set ame.pre_version matches 1 run execute unless score #ame.major ame.pre_version matches 2 run scoreboard players set #ame.mismatch ame.pre_version 1
 execute if score #ame.ver_set ame.pre_version matches 1 run execute unless score #ame.minor ame.pre_version matches 0 run scoreboard players set #ame.mismatch ame.pre_version 1
 execute if score #ame.ver_set ame.pre_version matches 1 run execute unless score #ame.patch ame.pre_version matches 3 run scoreboard players set #ame.mismatch ame.pre_version 1
-execute if score #ame.ver_set ame.pre_version matches 1 run execute unless score #ame.pre ame.pre_version matches 2 run scoreboard players set #ame.mismatch ame.pre_version 1
+execute if score #ame.ver_set ame.pre_version matches 1 run execute unless score #ame.pre ame.pre_version matches 3 run scoreboard players set #ame.mismatch ame.pre_version 1
 execute if score #ame.mismatch ame.pre_version matches 1 run function ame_load:load/internal/version_warn
 execute if score #ame.mismatch ame.pre_version matches 1 run return 0
 
