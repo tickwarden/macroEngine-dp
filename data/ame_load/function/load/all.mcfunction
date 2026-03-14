@@ -1,5 +1,3 @@
-advancement grant @a only macro:hidden/root
-
 forceload add -30000000 1600
 
 execute unless function ame_load:load/internal/validate run return 0
@@ -23,7 +21,7 @@ tellraw @a[tag=macro.debug] {"text":"[Macro Engine v2.0.3-pre3] Loaded.","color"
 data modify storage macro:input sound set value "minecraft:ui.toast.challenge_complete"
 data modify storage macro:input volume set value 1
 data modify storage macro:input pitch set value 1
-execute if entity @a[advancements={macro:hidden/root=true}] run function macro:cmd/sound_all with storage macro:input {}
+function macro:cmd/sound_all with storage macro:input {}
 data remove storage macro:input sound
 data remove storage macro:input volume
 data remove storage macro:input pitch
@@ -31,6 +29,6 @@ data remove storage macro:input pitch
 data modify storage macro:input level set value "Advanced Macro Engine v2.0.3-pre3"
 data modify storage macro:input message set value "Loaded."
 data modify storage macro:input color set value "green"
-execute if entity @a[advancements={macro:hidden/root=true}] run function macro:log/add with storage macro:input {}
+function macro:log/add with storage macro:input {}
 
 function ame_load:load/internal/finalize
