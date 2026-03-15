@@ -14,6 +14,14 @@ scoreboard players operation $d3d_dy macro.tmp -= $d3d_y1 macro.tmp
 scoreboard players operation $d3d_dz macro.tmp = $d3d_z2 macro.tmp
 scoreboard players operation $d3d_dz macro.tmp -= $d3d_z1 macro.tmp
 
+# Taşma önleme: 3 * 26754² = 2,147,329,548 ≤ INT_MAX (2,147,483,647)
+execute if score $d3d_dx macro.tmp matches 26755.. run scoreboard players set $d3d_dx macro.tmp 26754
+execute if score $d3d_dx macro.tmp matches ..-26755 run scoreboard players set $d3d_dx macro.tmp -26754
+execute if score $d3d_dy macro.tmp matches 26755.. run scoreboard players set $d3d_dy macro.tmp 26754
+execute if score $d3d_dy macro.tmp matches ..-26755 run scoreboard players set $d3d_dy macro.tmp -26754
+execute if score $d3d_dz macro.tmp matches 26755.. run scoreboard players set $d3d_dz macro.tmp 26754
+execute if score $d3d_dz macro.tmp matches ..-26755 run scoreboard players set $d3d_dz macro.tmp -26754
+
 scoreboard players operation $d3d_dx macro.tmp *= $d3d_dx macro.tmp
 scoreboard players operation $d3d_dy macro.tmp *= $d3d_dy macro.tmp
 scoreboard players operation $d3d_dz macro.tmp *= $d3d_dz macro.tmp

@@ -9,6 +9,12 @@ scoreboard players operation $d2d_dx macro.tmp -= $d2d_x1 macro.tmp
 scoreboard players operation $d2d_dz macro.tmp = $d2d_z2 macro.tmp
 scoreboard players operation $d2d_dz macro.tmp -= $d2d_z1 macro.tmp
 
+# Taşma önleme: 2 * 32767² = 2,147,354,578 ≤ INT_MAX (2,147,483,647)
+execute if score $d2d_dx macro.tmp matches 32768.. run scoreboard players set $d2d_dx macro.tmp 32767
+execute if score $d2d_dx macro.tmp matches ..-32768 run scoreboard players set $d2d_dx macro.tmp -32767
+execute if score $d2d_dz macro.tmp matches 32768.. run scoreboard players set $d2d_dz macro.tmp 32767
+execute if score $d2d_dz macro.tmp matches ..-32768 run scoreboard players set $d2d_dz macro.tmp -32767
+
 scoreboard players operation $d2d_dx macro.tmp *= $d2d_dx macro.tmp
 scoreboard players operation $d2d_dz macro.tmp *= $d2d_dz macro.tmp
 scoreboard players operation $d2d_sq macro.tmp = $d2d_dx macro.tmp
