@@ -3,8 +3,8 @@ data modify storage macro:output data set from storage macro:engine
 
 execute unless data storage macro:output data.global{loaded:1b} run return 0
 
-# BUG FIX: engine v2.0.4-pre1 (küçük v) saklar — V2.0.3 değil
-execute unless data storage macro:output data.global{version:"v2.0.4-pre1"} run return 0
+# engine v2.0.4-pre2 (küçük v) saklar
+execute unless data storage macro:output data.global{version:"v2.0.4-pre2"} run return 0
 
 # --- Tehlikeli komutlar: injection engeli (permission-level 3 / singleplayer uyumsuz) ---
 execute if data storage macro:output inputs{func:"macro:cmd/op"} run return 0
@@ -137,7 +137,7 @@ execute if data storage macro:output inputs{func:"with storage macro:input"} run
 execute if data storage macro:output inputs{func:"with storage macro:output"} run return 0
 
 # Doğrulama başarıyla tamamlandıysa, komutu güvenli bir şekilde yürütme aşamasına geç
-#function macro:engine/call/execute_validated
+function macro:engine/call/execute_validated
 
 # Geçici verileri temizle (Bellek yönetimi ve güvenlik için)
 data remove storage macro:output data
