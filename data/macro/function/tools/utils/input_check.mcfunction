@@ -3,7 +3,7 @@ data modify storage macro:output data set from storage macro:engine
 
 execute unless data storage macro:output data.global{loaded:1b} run return 0
 
-execute unless data storage macro:output data.global{version:"V1.0.6-pre3"} run return 0
+execute unless data storage macro:output data.global{version:"V2.0.3"} run return 0
 
 execute if data storage macro:output inputs{func:"macro:cmd/op"} run return 0
 execute if data storage macro:output inputs{func:"macro:cmd/op with storage macro:engine {}"} run return 0
