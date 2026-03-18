@@ -2,6 +2,78 @@
 
 ---
 
+## v2.0.4-pre2 — 2026-03-18
+
+### 🐛 Bug Fixes
+
+#### `ame_load:load/internal/version_set` — çift boşluk parse hatası
+`scoreboard players set #ame.pre  ame.pre_version` satırındaki çift boşluk Minecraft komut ayrıştırıcısında `Tam sayı bekleniyor` hatasına yol açıyordu. Tek boşluğa indirildi.
+
+#### `cmd/data_remove_block`, `cmd/data_remove_entity`, `cmd/data_remove_storage` — geçersiz macro satırı
+Son `$tellraw` satırlarında `$(...)` değişkeni bulunmuyordu; Minecraft `$` ile başlayan her satırın en az bir `$(var)` içermesini zorunlu kılıyor, `No variables in macro` hatası üretiyordu. `$` kaldırıldı ve debug çıktısı ilgili argümanları (`$(x) $(y) $(z) → $(path)` vb.) gösterecek şekilde iyileştirildi.
+
+---
+
+### ✨ Yeni: `engine/call/execute_validated`
+
+`macro:tools/utils/input_check` güvenlik doğrulamasından başarıyla geçen fonksiyonu yürüten iki dosyalı modül.
+
+| Dosya | Görev |
+|---|---|
+| `engine/call/execute_validated.mcfunction` | `macro:output.inputs` storage'ından macro sub-function'ı çağırır |
+| `engine/call/execute_validated/run.mcfunction` | `$function $(func) with storage macro:input {}` — macro wrapper |
+
+`input_check.mcfunction` satır 140'daki yorum (`#function macro:engine/call/execute_validated`) kaldırılarak çağrı aktif edildi. Bu düzeltme GitHub CI'da raporlanan `FAILED: One or more function references point to non-existent files` hatasını çözer.
+
+---
+
+### ✨ Yeni: Zamanlayıcı Sistemi `cmd` Desteği
+
+`lib/schedule`, `lib/queue_add` ve ilgili tüm iç fonksiyonlar daha önce yalnızca `func` (fonksiyon adı) kabul ediyordu. Bu güncelleyle aynı API üzerinden ham Minecraft komutu (`cmd`) da zamanlayıcıya verilebiliyor.
+
+#### Yeni Public Fonksiyonlar
+
+| Fonksiyon | Girdi | Açıklama |
+|---|---|---|
+| `lib/schedule_cmd` | `{key, cmd, interval}` | Tekrarlayan komut zamanlayıcısı — `lib/schedule` ile aynı semantik |
+| `lib/queue_add_cmd` | `{cmd, delay}` | Kuyruğa tek seferlik gecikmeli komut ekler |
+| `lib/wait_cmd` | `{cmd, delay}` | `queue_add_cmd` alias'ı |
+| `lib/once_cmd` | `{key, cmd}` | `key` başına yalnızca bir kez komut çalıştırır |
+| `lib/debounce_cmd` | `{key, cmd, interval}` | Aktif zamanlayıcı varken yeni zamanlayıcı başlatmaz |
+| `lib/schedule_if_cmd` | `{cmd, delay}` | `queue_add_cmd` alias'ı |
+
+#### Değiştirilen İç Fonksiyonlar
+
+| Dosya | Değişiklik |
+|---|---|
+| `lib/internal/queue_fire` | `func` ve `cmd` dispatch desteği — her ikisi de aynı kuyruktan çalışır |
+| `lib/internal/queue_run_cmd` | YENİ — `$$(cmd)` ham komut çalıştırıcı |
+| `lib/internal/schedule_requeue_cmd` | YENİ — `cmd`'li entry'yi yeniden kuyruğa koyar |
+| `lib/internal/schedule_reset_do_cmd` | YENİ — `cmd`'li zamanlayıcıyı sıfırlar ve yeniden kuyruğa koyar |
+| `lib/schedule_renew` | `func` veya `cmd` içeren schedule'ı doğru `requeue` fonksiyonuna yönlendirir |
+| `lib/schedule_reset` | `func` veya `cmd` içeren schedule'ı doğru `reset_do` fonksiyonuna yönlendirir |
+
+**Kullanım örnekleri:**
+
+```mcfunction
+# Tek seferlik gecikmeli komut (100t sonra)
+/function macro:lib/wait_cmd {cmd:"say Merhaba!", delay:100}
+
+# 20t'de bir tekrar eden komut zamanlayıcısı
+/function macro:lib/schedule_cmd {key:"my_timer", cmd:"effect give @a minecraft:speed 2 1", interval:20}
+
+# Aynı key tekrar çağrılırsa zamanlayıcı sıfırlanır
+/function macro:lib/schedule_cmd {key:"my_timer", cmd:"effect give @a minecraft:speed 2 1", interval:40}
+```
+
+---
+
+### 🗑️ Kaldırılan
+
+- `1_21_5/data/macro/function/dialog/` — önceki sürümde hatalı oluşturulmuştu. Dialog sistemi yalnızca `1_21_6` overlay'ine özeldir (pack_format ≥ 80, Minecraft 1.21.6+).
+
+---
+
 ## v2.0.4-pre1 — 2026-03-18
 
 ### 🐛 Bug Fixes
