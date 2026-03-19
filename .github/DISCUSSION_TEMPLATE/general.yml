@@ -1,0 +1,24 @@
+title: "[Question]"
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Provide a short summary of your question.
+      placeholder: "What's your question about?"
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Provide detailed information about your question.
+      placeholder: "Include any relevant context, examples, or code snippets."
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: Select the category that best fits your question.
+      options:
+        - Documentation
+        - Usage
+        - Setup / Installation
+        - Other
