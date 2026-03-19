@@ -24,3 +24,6 @@ execute unless data storage macro:engine _pid_seq run data modify storage macro:
 
 # UUID modülü başlatma
 function macro:uuid/internal/init
+
+# once_per_player modülü başlatma
+execute unless data storage macro:engine once_per_player run data modify storage macro:engine once_per_player set value {}
