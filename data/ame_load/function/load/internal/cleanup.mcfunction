@@ -67,3 +67,17 @@ data remove storage macro:engine _wand_filter_tag
 data remove storage macro:engine _wand_cur
 data remove storage macro:engine player_pids
 data remove storage macro:engine _pid_seq
+
+# Hook modülü temizleme
+scoreboard objectives remove macro.hook_online
+scoreboard objectives remove macro.hook_deaths
+scoreboard objectives remove macro.hook_placed
+scoreboard objectives remove macro.hook_lvl
+tag @a remove macro.hook_dead
+data remove storage macro:engine hook_binds
+data remove storage macro:engine _hook_iter
+data remove storage macro:engine _hook_ctx
+data remove storage macro:engine _hook_fire_event
+data remove storage macro:engine _hook_fire_tmp
+data remove storage macro:engine _hook_unbinds
+data remove storage macro:engine _hook_filter_event

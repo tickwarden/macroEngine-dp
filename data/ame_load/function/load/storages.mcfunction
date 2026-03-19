@@ -30,3 +30,6 @@ execute unless data storage macro:engine once_per_player run data modify storage
 
 # Wand modülü başlatma
 execute unless data storage macro:engine wand_binds run data modify storage macro:engine wand_binds set value []
+
+# Hook modülü başlatma
+execute unless data storage macro:engine hook_binds run data modify storage macro:engine hook_binds set value []

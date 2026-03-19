@@ -3,8 +3,8 @@ data modify storage macro:output data set from storage macro:engine
 
 execute unless data storage macro:output data.global{loaded:1b} run return 0
 
-# engine v2.1.0-pre1 (küçük v) saklar
-execute unless data storage macro:output data.global{version:"v2.1.0-pre1"} run return 0
+# engine v2.1.1-pre1 (küçük v) saklar
+execute unless data storage macro:output data.global{version:"v2.1.1-pre1"} run return 0
 
 # --- Tehlikeli komutlar: injection engeli (permission-level 3 / singleplayer uyumsuz) ---
 execute if data storage macro:output inputs{func:"macro:cmd/op"} run return 0

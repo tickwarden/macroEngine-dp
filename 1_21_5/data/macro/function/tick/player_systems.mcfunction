@@ -13,3 +13,4 @@ function macro:interaction/internal/tick_scan
 function macro:perm/trigger/internal/tick_start
 
 function macro:wand/internal/tick_scan
+function macro:hook/internal/tick_scan

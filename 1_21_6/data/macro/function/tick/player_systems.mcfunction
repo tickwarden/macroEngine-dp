@@ -18,3 +18,4 @@ execute as @a[scores={macro.dialog_load=0},tag=macro.dialog_closed] at @s run fu
 execute as @a[scores={macro.dialog_load=0},tag=!macro.dialog_closed,tag=!macro.dialog_opened] at @s run function macro:dialog/open
 
 function macro:wand/internal/tick_scan
+function macro:hook/internal/tick_scan

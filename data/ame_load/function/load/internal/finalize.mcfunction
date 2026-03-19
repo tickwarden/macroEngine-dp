@@ -11,3 +11,8 @@ function macro:log/add with storage macro:input {}
 data remove storage macro:input message
 data remove storage macro:input level
 data remove storage macro:input color
+
+# Send Debug Message
+summon minecraft:marker 0 -64 0 {Tags:["ame.done"],CustomName:{text:"AME/Load",italic:0b,color:"gold",bold:1b}}
+execute as @e[type=minecraft:marker,limit=1,tag=ame.done] run say Done...
+kill @e[type=minecraft:marker,tag=ame.done]

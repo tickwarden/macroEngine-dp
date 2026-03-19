@@ -2,7 +2,7 @@
 
 ---
 
-## v2.1.0 — 2026-03-19
+## v2.1.1 — 2026-03-19
 
 ### ✨ Yeni Modül: `wand/`
 
@@ -57,9 +57,9 @@ Scoreboard: `macro.rightClick` (`minecraft.used:minecraft.carrot_on_a_stick`)
 ### 🐛 Bug Fixes
 
 #### `ame_load:load/internal/validate` — storage'daki eski versiyon mismatch
-İlk satır `{version:"v2.1.0-pre1"}` yazıyordu. Önceki dünyadan kalan storage değeri silinmediği için her `/reload`'da mismatch tetiklenip yükleme iptal ediliyordu. İki ayrı düzeltme yapıldı:
-- İlk satır: `v2.1.0-pre1` → `v2.1.0` düzeltildi
-- `data modify storage macro:engine global.version set value "v2.1.0"` satırı eklendi — storage zaten varsa bile her load'da version üzerine yazılır
+İlk satır `{version:"v2.1.1-pre1"}` yazıyordu. Önceki dünyadan kalan storage değeri silinmediği için her `/reload`'da mismatch tetiklenip yükleme iptal ediliyordu. İki ayrı düzeltme yapıldı:
+- İlk satır: `v2.1.1-pre1` → `v2.1.1` düzeltildi
+- `data modify storage macro:engine global.version set value "v2.1.1"` satırı eklendi — storage zaten varsa bile her load'da version üzerine yazılır
 
 #### `cmd/save-all`, `cmd/save-off`, `cmd/save-on`, `cmd/stop` — tek oyunculu mod parse hatası
 Bu komutlar tek oyunculu modda Minecraft'ın command dispatcher'ı tarafından tanınmıyor; load sırasında `Bilinmeyen veya eksik komut` hatası üretiyordu. `cmd/other/run_self` macro wrapper'ı üzerinden çalıştırılacak şekilde yeniden yazıldı — macro fonksiyonlar load sırasında parse edilmediği için hata kalktı.
