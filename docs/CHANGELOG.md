@@ -1,7 +1,17 @@
 # Advanced Macro Engine — Changelog
 
 ---
-## v2.2.0-en-en — 2026-03-22
+
+## v2.2.1 — 2026-03-23
+### 🐛 Bug Fixes
+ Bug | Düzeltme |
+|-----|----------|
+| Gereksiz 'Bilinmeyen fonksiyon' hataları | Düzeltildi |
+| Gereksiz `wand/register` hataları | Tüm satırlar yeniden yazıldı |
+
+---
+
+## v2.2.0-en — 2026-03-22
 ### Changes
 - Translated all Turkish comments, docstrings, and in-game strings to English.
 
