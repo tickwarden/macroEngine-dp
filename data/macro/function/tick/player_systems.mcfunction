@@ -8,18 +8,6 @@ execute as @a[scores={macro_run=1..}] run function #macro:run
 scoreboard players set @a[scores={macro_run=1..}] macro_run 0
 scoreboard players enable @a[scores={macro_run=-1..}] macro_run
 
-execute as @a[scores={macro_dialog=1..}] run function macro:dialog/close
-execute as @a[scores={macro_dialog=1..}] run function macro:dialog/load
-scoreboard players set @a[scores={macro_dialog=1..}] macro_dialog 0
-scoreboard players enable @a[scores={macro_dialog=-1..}] macro_dialog
-
-execute as @a[scores={macro_reload=1..}] run say Reloading...
-execute as @a[scores={macro_reload=1..}] run function macro:disable/main
-execute as @a[scores={macro_reload=1..}] run execute as @a[scores={macro_reload=1..}] run function macro:load
-execute as @a[scores={macro_reload=1..}] run say Reload successful...
-scoreboard players set @a[scores={macro_reload=1..}] macro_reload 0
-scoreboard players enable @a[scores={macro_reload=-1..}] macro_reload
-
 execute as @a[scores={macro_action=1..}] run function macro:trigger/internal/dispatch
 
 function macro:interaction/internal/tick_scan

@@ -8,8 +8,6 @@ scoreboard objectives add macro.tick_guard dummy
 scoreboard objectives add health health {"text":"❤","color":"red"}
 scoreboard objectives add ame.pre_version dummy
 scoreboard objectives add macro.pid dummy
-scoreboard objectives add macro_dialog trigger
-scoreboard objectives add macro_reload trigger
 
 scoreboard objectives add macro.Flags dummy {"text":"Macro Flags","color":"gold"}
 
