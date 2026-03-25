@@ -1,8 +1,21 @@
 # Advanced Macro Engine — Changelog
 
 ---
+## v2.2.2
+### ✨ Yeni `cmd/` komutları
+ Komut | Parametreler |
+|-----|----------|
+| `cmd/swing` | {player,hand} |
+| `cmd/time_of` | {clock,action,value} |
+| `cmd/set_clock_rate` | {rate} |
 
-## v2.2.2 — 2026-03-23
+### 🐛 Bug Fixes
+ Bug | Düzeltme |
+|-----|----------|
+| `is_daytime.json` 26.1'da hata veriyordu | Düzeltildi |
+
+---
+## v2.2.1 — 2026-03-23
 ### 🐛 Bug Fixes
  Bug | Düzeltme |
 |-----|----------|
