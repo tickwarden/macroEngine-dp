@@ -1,6 +1,3 @@
-setblock -30000000 0 1600 minecraft:test_block[mode=log]{mode:"log",message:"❌ [AME] Version conflict detected. Expected v2.2.5. Run /reload in-game for details."}
-setblock -30000000 1 1600 minecraft:redstone_block
-
 tellraw @a ["",{"text":"[AME] ","color":"#00AAAA","bold":true},{"text":"✘ ","color":"red"},{"text":"Version conflict! ","color":"red","bold":true},{"text":"Expected ","color":"#555555"},{"text":"v2.2.5","color":"aqua","bold":true},{"text":" — stored scores do not match.","color":"#555555"}]
 tellraw @a ["",{"text":" ","color":"#555555"},{"text":"→ Run ","color":"gray"},{"text":"/reload","color":"aqua","underlined":true,"click_event":{"action":"run_command","command":"/reload"},"hover_event":{"action":"show_text","value":"Click to reload"}},{"text":" to reinitialize AME.","color":"gray"}]
 
