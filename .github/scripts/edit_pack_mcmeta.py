@@ -1,86 +1,121 @@
 #!/usr/bin/env python3
-"""
-pack.mcmeta düzenleyici.
-Kullanım: edit_pack_mcmeta.py <pack_format> <supported_min> <supported_max>
-overlay_updates: GITHUB_EVENT_PATH üzerinden okunur (workflow_dispatch input).
-"""
 
 import json
 import os
 import sys
+from typing import Dict, Any
 
 
-def main():
+def main() -> None:
     if len(sys.argv) < 4:
         print("Kullanım: edit_pack_mcmeta.py <pack_format> <supported_min> <supported_max>")
         sys.exit(1)
 
-    pf   = int(sys.argv[1])
-    smin = int(sys.argv[2])
-    smax = int(sys.argv[3])
+    try:
+        pf = int(sys.argv[1])
+        smin = int(sys.argv[2])
+        smax = int(sys.argv[3])
+    except ValueError:
+        print("Hata: pack_format, supported_min ve supported_max tam sayı olmalıdır.")
+        sys.exit(1)
 
-    # overlay_updates'i GITHUB_EVENT_PATH'ten oku (jq/heredoc sorunlarını önler)
+    # GitHub Actions'tan overlay_updates girdisini oku
     overlay_raw = ""
     event_path = os.environ.get("GITHUB_EVENT_PATH", "")
     if event_path and os.path.exists(event_path):
-        with open(event_path, "r", encoding="utf-8") as f:
-            event = json.load(f)
-        overlay_raw = event.get("inputs", {}).get("overlay_updates", "") or ""
+        try:
+            with open(event_path, "r", encoding="utf-8") as f:
+                event = json.load(f)
+            overlay_raw = event.get("inputs", {}).get("overlay_updates", "") or ""
+        except (json.JSONDecodeError, IOError) as e:
+            print(f"Uyarı: GitHub event dosyası okunamadı: {e}")
 
-    with open("pack.mcmeta", "r", encoding="utf-8") as f:
-        meta = json.load(f)
+    # pack.mcmeta dosyasını oku
+    try:
+        with open("pack.mcmeta", "r", encoding="utf-8") as f:
+            meta: Dict[str, Any] = json.load(f)
+    except FileNotFoundError:
+        print("Hata: pack.mcmeta dosyası bulunamadı!")
+        sys.exit(1)
+    except json.JSONDecodeError as e:
+        print(f"Hata: pack.mcmeta geçerli bir JSON değil: {e}")
+        sys.exit(1)
 
-    old_pf   = meta["pack"]["pack_format"]
-    old_smin = meta["pack"].get("supported_formats", {}).get("min_inclusive", "?")
-    old_smax = meta["pack"].get("supported_formats", {}).get("max_inclusive", "?")
+    pack = meta.setdefault("pack", {})
 
-    meta["pack"]["pack_format"] = pf
-    meta["pack"]["supported_formats"] = {
+    # Eski değerleri kaydet (log için)
+    old_pf = pack.get("pack_format")
+    supported = pack.get("supported_formats", {})
+    old_smin = supported.get("min_inclusive", "?")
+    old_smax = supported.get("max_inclusive", "?")
+
+    # Ana pack_format ve supported_formats güncelle
+    pack["pack_format"] = pf
+    pack["supported_formats"] = {
         "min_inclusive": smin,
         "max_inclusive": smax,
     }
 
-    if "min_format" in meta["pack"]:
-        meta["pack"]["min_format"] = smin
-    if "max_format" in meta["pack"]:
-        meta["pack"]["max_format"] = smax
+    # Eski stil min_format / max_format varsa onları da güncelle (geriye uyumluluk)
+    if "min_format" in pack:
+        pack["min_format"] = smin
+    if "max_format" in pack:
+        pack["max_format"] = smax
 
-    print(f"pack_format      : {old_pf} → {pf}")
+    print(f"pack_format : {old_pf} → {pf}")
     print(f"supported_formats: [{old_smin}, {old_smax}] → [{smin}, {smax}]")
 
+    # Overlay'leri güncelle (varsa)
     if overlay_raw.strip():
-        entries = {e["directory"]: e for e in meta.get("overlays", {}).get("entries", [])}
+        entries: Dict[str, Dict[str, Any]] = {
+            e["directory"]: e
+            for e in meta.get("overlays", {}).get("entries", [])
+        }
+
         for line in overlay_raw.splitlines():
             line = line.strip()
             if not line or "=" not in line or ":" not in line:
                 continue
-            directory, fmt = line.split("=", 1)
-            directory = directory.strip()
-            o_min, o_max = fmt.strip().split(":", 1)
-            o_min = int(o_min.strip())
-            o_max = int(o_max.strip())
 
-            if directory in entries:
-                old_fmt = entries[directory].get("formats", {})
-                old_min = old_fmt.get("min_inclusive", "?")
-                old_max = old_fmt.get("max_inclusive", "?")
-                entries[directory]["formats"] = {
-                    "min_inclusive": o_min,
-                    "max_inclusive": o_max,
-                }
-                if "min_format" in entries[directory]:
-                    entries[directory]["min_format"] = o_min
-                if "max_format" in entries[directory]:
-                    entries[directory]["max_format"] = o_max
-                print(f"overlay '{directory}': [{old_min}, {old_max}] → [{o_min}, {o_max}]")
-            else:
-                print(f"WARN: overlay '{directory}' pack.mcmeta'da bulunamadı, atlandı.")
+            try:
+                directory, fmt = [x.strip() for x in line.split("=", 1)]
+                o_min_str, o_max_str = [x.strip() for x in fmt.split(":", 1)]
 
-    with open("pack.mcmeta", "w", encoding="utf-8") as f:
-        json.dump(meta, f, indent=2, ensure_ascii=False)
-        f.write("\n")
+                o_min = int(o_min_str)
+                o_max = int(o_max_str)
 
-    print("pack.mcmeta güncellendi.")
+                if directory in entries:
+                    entry = entries[directory]
+                    old_fmt = entry.get("formats", {})
+                    old_min = old_fmt.get("min_inclusive", "?")
+                    old_max = old_fmt.get("max_inclusive", "?")
+
+                    entry["formats"] = {
+                        "min_inclusive": o_min,
+                        "max_inclusive": o_max,
+                    }
+
+                    if "min_format" in entry:
+                        entry["min_format"] = o_min
+                    if "max_format" in entry:
+                        entry["max_format"] = o_max
+
+                    print(f"overlay '{directory}': [{old_min}, {old_max}] → [{o_min}, {o_max}]")
+                else:
+                    print(f"WARN: overlay '{directory}' pack.mcmeta'da bulunamadı, atlandı.")
+
+            except (ValueError, IndexError) as e:
+                print(f"WARN: Geçersiz overlay satırı atlandı: '{line}' ({e})")
+
+    # Güncellenmiş pack.mcmeta'yı yaz
+    try:
+        with open("pack.mcmeta", "w", encoding="utf-8") as f:
+            json.dump(meta, f, indent=2, ensure_ascii=False)
+            f.write("\n")
+        print("✅ pack.mcmeta başarıyla güncellendi.")
+    except IOError as e:
+        print(f"Hata: pack.mcmeta yazılamadı: {e}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
