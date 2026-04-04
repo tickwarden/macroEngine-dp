@@ -15,9 +15,9 @@ execute unless score @s macro.rl_max matches 1.. run scoreboard players operatio
 scoreboard players add @s macro.rl_counter 1
 
 # Limit exceeded — set cooldown directly, no sub-functions
-execute if score @s macro.rl_counter > @s macro.rl_max run scoreboard players add @s macro.rl_violations 1
-execute if score @s macro.rl_counter > @s macro.rl_max run scoreboard players operation @s macro.rl_cooldown = #rl_cooldown_1 macro.rl_max
-execute if score @s macro.rl_counter > @s macro.rl_max run scoreboard players set @s macro.rl_counter 0
+execute if score @s macro.rl_counter >= @s macro.rl_max run scoreboard players add @s macro.rl_violations 1
+execute if score @s macro.rl_counter >= @s macro.rl_max run scoreboard players operation @s macro.rl_cooldown = #rl_cooldown_1 macro.rl_max
+execute if score @s macro.rl_counter >= @s macro.rl_max run scoreboard players set @s macro.rl_counter 0
 
 execute if score @s macro.rl_cooldown matches 1.. run return 1
 return 0
