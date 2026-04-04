@@ -40,34 +40,48 @@ jobs:
           }
 
           while IFS= read -r file; do
+            # Changelog güncellendiyse işaretle
+            [ "$file" = "docs/CHANGELOG.md" ] && has_changelog=1 && add_label "changelog"
+
+            # Overlay klasörleri
             case "$file" in
-              # Overlay-specific changes
               _pre_1_21_4/*)   add_label "overlay" ;;
-              compat_1_21_4/*)        add_label "overlay" ;;
+              compat_1_21_4/*) add_label "overlay" ;;
+              1_20_3/*)        add_label "overlay" ;;
+              1_21_4/*)        add_label "overlay" ;;
+              1_21_5/*)        add_label "overlay" ;;
               1_21_6/*)        add_label "overlay" ;;
-
-              # Function logic
-              data/*/function/*.mcfunction | data/*/function/**/*.mcfunction)
-                add_label "mcfunction" ;;
-
-              # Data files (loot tables, advancements, predicates, etc.)
-              data/*/loot_table/*)   add_label "loot-table" ;;
-              data/*/advancement/*)  add_label "advancement" ;;
-              data/*/predicate/*)    add_label "predicate" ;;
-              data/*/damage_type/*)  add_label "damage-type" ;;
-              data/*/item_modifier/*)add_label "item-modifier" ;;
-              data/*/tags/*)         add_label "tags" ;;
-
-              # Pack root
-              pack.mcmeta)           add_label "pack-meta" ;;
-
-              # Docs
-              docs/CHANGELOG.md)     add_label "changelog" ;;
-              docs/*)                add_label "documentation" ;;
-
-              # CI
-              .github/*)             add_label "ci" ;;
+              26_1/*)          add_label "overlay" ;;
             esac
+
+            # .mcfunction dosyaları (tüm klasörler, bash case ** çalışmaz → grep kullan)
+            if echo "$file" | grep -qE '\.mcfunction$'; then
+              add_label "mcfunction"
+            fi
+
+            # Data dosyaları
+            case "$file" in
+              */loot_table/*)    add_label "loot-table" ;;
+              */advancement/*)   add_label "advancement" ;;
+              */predicate/*)     add_label "predicate" ;;
+              */damage_type/*)   add_label "damage-type" ;;
+              */item_modifier/*) add_label "item-modifier" ;;
+              */tags/*)          add_label "tags" ;;
+            esac
+
+            # Pack root
+            [ "$file" = "pack.mcmeta" ] && add_label "pack-meta"
+
+            # Docs
+            case "$file" in
+              docs/*) add_label "documentation" ;;
+            esac
+
+            # CI
+            case "$file" in
+              .github/*) add_label "ci" ;;
+            esac
+
           done <<< "$changed"
 
           LABELS=$(echo "$LABELS" | xargs)  # trim whitespace
@@ -102,6 +116,6 @@ jobs:
           # Apply labels to PR
           label_args=""
           for label in $LABELS; do
-            label_args="$label_args --label $label"
+            label_args="$label_args --add-label $label"
           done
           gh pr edit "$PR_NUMBER" $label_args

@@ -32,7 +32,7 @@ jobs:
               echo "FAIL [CRLF]: $f"
               FAILED=1
             fi
-          done < <(find data _pre_1_21_4 compat_1_21_4 1_21_6 -name "*.mcfunction" 2>/dev/null)
+          done < <(find data _pre_1_21_4 compat_1_21_4 1_20_3 1_21_4 1_21_5 1_21_6 26_1 -name "*.mcfunction" 2>/dev/null)
           if [ $FAILED -ne 0 ]; then
             echo ""
             echo "Fix: git config core.autocrlf false && dos2unix <file>"
@@ -69,7 +69,7 @@ jobs:
                 fi
               fi
             done < "$f"
-          done < <(find data _pre_1_21_4 compat_1_21_4 1_21_6 -name "*.mcfunction" 2>/dev/null)
+          done < <(find data _pre_1_21_4 compat_1_21_4 1_20_3 1_21_4 1_21_5 1_21_6 26_1 -name "*.mcfunction" 2>/dev/null)
           [ $FAILED -ne 0 ] && exit 1 || echo "PASSED: All macro variables on correct lines."
 
   # ─────────────────────────────────────────────
@@ -91,7 +91,7 @@ jobs:
               echo "WARN [no-input-comment]: $f"
               WARN=$((WARN + 1))
             fi
-          done < <(find data _pre_1_21_4 compat_1_21_4 1_21_6 -name "*.mcfunction" 2>/dev/null)
+          done < <(find data _pre_1_21_4 compat_1_21_4 1_20_3 1_21_4 1_21_5 1_21_6 26_1 -name "*.mcfunction" 2>/dev/null)
           if [ $WARN -gt 0 ]; then
             echo ""
             echo "WARN: $WARN file(s) use macro variables but have no '# INPUT:' comment."
@@ -123,7 +123,7 @@ jobs:
                 FOUND=$((FOUND + 1))
               fi
             done < "$f"
-          done < <(find data _pre_1_21_4 compat_1_21_4 1_21_6 -name "*.mcfunction" 2>/dev/null)
+          done < <(find data _pre_1_21_4 compat_1_21_4 1_20_3 1_21_4 1_21_5 1_21_6 26_1 -name "*.mcfunction" 2>/dev/null)
           if [ $FOUND -gt 0 ]; then
             echo ""
             echo "WARN: $FOUND @p occurrence(s). Prefer @a[name=\$(player),limit=1]."
@@ -148,5 +148,5 @@ jobs:
               echo "WARN [trailing-ws]: $f ($count line(s))"
               FOUND=$((FOUND + count))
             fi
-          done < <(find data _pre_1_21_4 compat_1_21_4 1_21_6 -name "*.mcfunction" 2>/dev/null)
+          done < <(find data _pre_1_21_4 compat_1_21_4 1_20_3 1_21_4 1_21_5 1_21_6 26_1 -name "*.mcfunction" 2>/dev/null)
           [ $FOUND -gt 0 ] && echo "WARN: $FOUND total trailing whitespace line(s)." || echo "PASSED"

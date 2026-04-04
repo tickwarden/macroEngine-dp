@@ -25,40 +25,42 @@ jobs:
         run: |
           FAILED=0
 
-          PACK_FORMAT=$(python3 -c "import json,sys; m=json.load(open('pack.mcmeta')); print(m['pack']['pack_format'])")
-          SUP_MIN=$(python3 -c "import json,sys; m=json.load(open('pack.mcmeta')); sf=m['pack'].get('supported_formats'); print(sf[0] if isinstance(sf,list) else sf.get('min_inclusive',''))")
-          SUP_MAX=$(python3 -c "import json,sys; m=json.load(open('pack.mcmeta')); sf=m['pack'].get('supported_formats'); print(sf[1] if isinstance(sf,list) else sf.get('max_inclusive',''))")
-          META_MIN=$(python3 -c "import json,sys; m=json.load(open('pack.mcmeta')); print(m['pack'].get('min_format',''))")
-          META_MAX=$(python3 -c "import json,sys; m=json.load(open('pack.mcmeta')); print(m['pack'].get('max_format',''))")
+          PACK_FORMAT=$(python3 -c "import json; m=json.load(open('pack.mcmeta')); print(m['pack']['pack_format'])")
 
-          echo "pack_format     : $PACK_FORMAT"
-          echo "supported_formats: [$SUP_MIN, $SUP_MAX]"
-          echo "min_format      : $META_MIN"
-          echo "max_format      : $META_MAX"
-          echo ""
+          # supported_formats ZORUNLU olarak object olmalı: {"min_inclusive":X,"max_inclusive":Y}
+          # Array [X,Y] syntax 1.21.10+ (pack_format 88+) sunucularında parse hatası verir — yasak
+          SF_TYPE=$(python3 -c "import json; m=json.load(open('pack.mcmeta')); sf=m['pack'].get('supported_formats'); print(type(sf).__name__)")
 
-          # 1. pack_format, supported_formats icinde olmali
+          if [ "$SF_TYPE" = "list" ]; then
+            echo "FAIL: supported_formats array [X,Y] syntax kullanılmış."
+            echo "  1.21.10+ (pack_format 88+) sunucularında parse hatası verir."
+            echo "  Doğru format: {\"min_inclusive\": X, \"max_inclusive\": Y}"
+            exit 1
+          fi
+
+          SUP_MIN=$(python3 -c "import json; m=json.load(open('pack.mcmeta')); sf=m['pack'].get('supported_formats',{}); print(sf.get('min_inclusive',''))")
+          SUP_MAX=$(python3 -c "import json; m=json.load(open('pack.mcmeta')); sf=m['pack'].get('supported_formats',{}); print(sf.get('max_inclusive',''))")
+
+          # min_format / max_format root-level alanları geçersiz — kullanılmamalı
+          META_MIN=$(python3 -c "import json; m=json.load(open('pack.mcmeta')); print(m['pack'].get('min_format',''))")
+          META_MAX=$(python3 -c "import json; m=json.load(open('pack.mcmeta')); print(m['pack'].get('max_format',''))")
+
+          echo "pack_format      : $PACK_FORMAT"
+          echo "supported_formats: {min_inclusive: $SUP_MIN, max_inclusive: $SUP_MAX}"
+
+          if [ -n "$META_MIN" ] || [ -n "$META_MAX" ]; then
+            echo "FAIL: min_format / max_format root-level alanları geçersiz. Kaldırın."
+            FAILED=1
+          fi
+
+          # pack_format, supported_formats aralığında olmalı
           if [ -n "$SUP_MIN" ] && [ -n "$SUP_MAX" ]; then
             if [ "$PACK_FORMAT" -lt "$SUP_MIN" ] || [ "$PACK_FORMAT" -gt "$SUP_MAX" ]; then
-              echo "FAIL: pack_format ($PACK_FORMAT) is outside supported_formats [$SUP_MIN, $SUP_MAX]"
+              echo "FAIL: pack_format ($PACK_FORMAT) supported_formats [$SUP_MIN, $SUP_MAX] dışında"
               FAILED=1
             else
-              echo "OK: pack_format $PACK_FORMAT is within supported_formats [$SUP_MIN, $SUP_MAX]"
+              echo "OK: pack_format $PACK_FORMAT, supported_formats [$SUP_MIN, $SUP_MAX] içinde"
             fi
-          fi
-
-          # 2. min_format / max_format (root level) supported_formats ile eslesmeli
-          if [ -n "$META_MIN" ] && [ -n "$SUP_MIN" ] && [ "$META_MIN" != "$SUP_MIN" ]; then
-            echo "FAIL: root min_format ($META_MIN) != supported_formats min ($SUP_MIN)"
-            FAILED=1
-          else
-            [ -n "$META_MIN" ] && echo "OK: min_format $META_MIN matches supported_formats min"
-          fi
-          if [ -n "$META_MAX" ] && [ -n "$SUP_MAX" ] && [ "$META_MAX" != "$SUP_MAX" ]; then
-            echo "FAIL: root max_format ($META_MAX) != supported_formats max ($SUP_MAX)"
-            FAILED=1
-          else
-            [ -n "$META_MAX" ] && echo "OK: max_format $META_MAX matches supported_formats max"
           fi
 
           # 3. Overlay aralikları supported_formats ile ortusme kontrolu
@@ -71,14 +73,12 @@ jobs:
               meta = json.load(f)
 
           failed = 0
-          sup = meta['pack'].get('supported_formats', [])
+          sup = meta['pack'].get('supported_formats', {})
           if isinstance(sup, list):
-              sup_min, sup_max = sup[0], sup[1]
-          elif isinstance(sup, dict):
-              sup_min = sup.get('min_inclusive', 0)
-              sup_max = sup.get('max_inclusive', 9999)
-          else:
-              sup_min, sup_max = sup, sup
+              print("FAIL: supported_formats array syntax kullanılmış — object olmalı")
+              sys.exit(1)
+          sup_min = sup.get('min_inclusive', 0)
+          sup_max = sup.get('max_inclusive', 9999)
 
           for entry in meta.get('overlays', {}).get('entries', []):
               d   = entry['directory']
@@ -87,10 +87,16 @@ jobs:
                   o_min = fmt.get('min_inclusive', 0)
                   o_max = fmt.get('max_inclusive', 9999)
               elif isinstance(fmt, list):
-                  o_min, o_max = fmt[0], fmt[1]
+                  print(f"  FAIL: overlay '{d}' formats array syntax kullanılmış — object olmalı")
+                  failed = 1
+                  continue
               else:
-                  # single integer (e.g. "formats": 71)
-                  o_min, o_max = fmt, fmt
+                  o_min = o_max = fmt
+
+              # min_format / max_format overlay entry içinde de geçersiz
+              if 'min_format' in entry or 'max_format' in entry:
+                  print(f"  FAIL: overlay '{d}' min_format/max_format alanları geçersiz — kaldırın")
+                  failed = 1
 
               overlap = o_min <= sup_max and o_max >= sup_min
               status = "OK" if overlap else "FAIL"
@@ -98,15 +104,6 @@ jobs:
                   failed = 1
               print(f"  {status}: overlay '{d}' [{o_min}, {o_max}] "
                     f"{'overlaps' if overlap else 'NO OVERLAP with'} supported_formats [{sup_min}, {sup_max}]")
-
-              e_min = entry.get('min_format')
-              e_max = entry.get('max_format')
-              if e_min is not None and e_min != o_min:
-                  print(f"  FAIL: overlay '{d}' entry min_format ({e_min}) != formats.min ({o_min})")
-                  failed = 1
-              if e_max is not None and e_max != o_max:
-                  print(f"  FAIL: overlay '{d}' entry max_format ({e_max}) != formats.max ({o_max})")
-                  failed = 1
 
           sys.exit(failed)
           PYEOF

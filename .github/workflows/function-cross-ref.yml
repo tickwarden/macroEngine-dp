@@ -39,7 +39,7 @@ jobs:
           # BUG FIX: "data" değil "." — base="data" ile
           # "$base/data/$ns/function/..." = "data/data/..." olurdu;
           # tüm refler MISSING raporlanırdı.
-          BASES=". _pre_1_21_4 compat_1_21_4 1_21_6"
+          BASES=". _pre_1_21_4 compat_1_21_4 1_20_3 1_21_4 1_21_5 1_21_6 26_1"
 
           # Skip listesi:
           # macro:cmd/   → dinamik dispatch: function macro:cmd/$(type) $(arguments)
@@ -87,7 +87,7 @@ jobs:
                 fi
               done
             done < "$mcfile"
-          done < <(find data _pre_1_21_4 compat_1_21_4 1_21_6 -name "*.mcfunction" 2>/dev/null)
+          done < <(find data _pre_1_21_4 compat_1_21_4 1_20_3 1_21_4 1_21_5 1_21_6 26_1 -name "*.mcfunction" 2>/dev/null)
 
           echo ""
           echo "Summary: $CHECKED refs checked, $SKIPPED skipped (dynamic/storage)"
@@ -114,7 +114,7 @@ jobs:
           FOUND=0
           # Her overlay için: find "<overlay>" döndürdüğü yollar "<overlay>/data/..." formatında gelir.
           # ${f#"$overlay"/} ile prefix'i strip edip base'de karşılığını kontrol ediyoruz.
-          for overlay in "_pre_1_21_4" "compat_1_21_4" "1_21_6"; do
+          for overlay in "_pre_1_21_4" "compat_1_21_4" "1_20_3" "1_21_4" "1_21_5" "1_21_6" "26_1"; do
             [ ! -d "$overlay" ] && continue
             while IFS= read -r f; do
               rel="${f#"$overlay"/}"
