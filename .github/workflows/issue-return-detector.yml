@@ -1,4 +1,4 @@
-name: Return Logic Bug Detector
+name: Issue Logic Bug Detector (Return)
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
@@ -7,16 +7,21 @@ on:
   issues:
     types: [opened, edited]
 
+# Gerekli izinler (label + comment için)
+permissions:
+  issues: write
+
 jobs:
-  detect-return:
+  detect-return-logic:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5
+      - name: Checkout repository
+        uses: actions/checkout@v5
 
-      - name: Run return logic detector
+      - name: Detect return-related logic bugs
         uses: actions/github-script@v7
         with:
           script: |
-            const script = require('./.github/scripts/detect_return_logic_bug.js');
+            const script = require('./.github/scripts/detect-return-logic.js');
             await script({ github, context });
