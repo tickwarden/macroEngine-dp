@@ -10,4 +10,4 @@
 # USAGE:
 #   function macro:hook/bind {event:"fish_caught",func:"mypack:on_fish"}
 # ─────────────────────────────────────────────────────────────────
-function macro:hook/bind {event:"fish_caught",func:"$(func)"}
+$function macro:hook/bind {event:"fish_caught",func:"$(func)"}
