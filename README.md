@@ -8,7 +8,7 @@
 
 > ⚠️ **This is the ONLY official source.**
 > Files downloaded from other sites or forks may have been modified.
-> Only download from the [Releases](https://github.com/toolkitmc/macroEngine-dp/releases) page.
+> Only download from the [Releases](https://github.com/tickwarden/macroEngine-datapack/releases) page.
 
 **SHA256:** `b6b929a5aa102bd011d2b27c2536bd7add3a8fa0072976ae4f55db38c4abe82e`
 
@@ -127,9 +127,9 @@ Added `cooldown/`, `event/`, `lib/`, `math/`, `cmd/`, `string/`, `player/` modul
 
 ## 💬 Community & Support
 
-[![Discussions](https://img.shields.io/github/discussions/toolkitmc/macroEngine-dp?style=for-the-badge&logo=github&color=blue)](https://github.com/toolkitmc/macroEngine-dp/discussions)
+[![Discussions](https://img.shields.io/github/discussions/tickwarden/macroEngine-datapack?style=for-the-badge&logo=github&color=blue)](https://github.com/tickwarden/macroEngine-datapack/discussions)
 
-[GitHub Discussions](https://github.com/toolkitmc/macroEngine-dp/discussions) — For questions, suggestions, and bug reports.
+[GitHub Discussions](https://github.com/tickwarden/macroEngine-datapack/discussions) — For questions, suggestions, and bug reports.
 
 ---
 
