@@ -1,28 +1,28 @@
 name: Feature Request
-description: Yeni bir fonksiyon, modül veya iyileştirme önerin
+description: Suggest a new feature, module or improvement
 title: "[FEATURE] "
-labels: [ enhancement ]
+labels:
+  - enhancement
 assignees: []
-
 body:
   # ─────────────────────────────────────────────
-  # 1. KATEGORİ
+  # 1. CATEGORY
   # ─────────────────────────────────────────────
   - type: dropdown
     id: category
     attributes:
-      label: Kategori
-      description: Bu özellik hangi modüle ait?
+      label: Category
+      description: Which module does this feature belong to?
       options:
-        - "cmd/ — Komut wrapper"
-        - "math/ — Matematik"
-        - "string/ — Metin / Ekran"
-        - "lib/ — Kütüphane / Yardımcı"
-        - "geo/ — Konum / Bölge"
-        - "inv/ — Envanter"
+        - "cmd/ — Command wrapper"
+        - "math/ — Mathematics"
+        - "string/ — String / Display"
+        - "lib/ — Library / Utilities"
+        - "geo/ — Location / Region"
+        - "inv/ — Inventory"
         - "entity/ — Entity"
-        - "player/ — Oyuncu"
-        - "event/ — Event sistemi"
+        - "player/ — Player"
+        - "event/ — Event system"
         - "cooldown/ — Cooldown"
         - "trigger/ — Trigger"
         - "flag/ — Flag"
@@ -31,129 +31,110 @@ body:
         - "dialog/ — Dialog (1.21.6+)"
         - "hook/ — Hook"
         - "interaction/ — Interaction"
-        - "Yeni modül"
-        - "Diğer"
+        - "New module"
+        - "Other"
     validations:
       required: true
 
   # ─────────────────────────────────────────────
-  # 2. AME VERSİYONU
+  # 2. A.M.E. VERSION
   # ─────────────────────────────────────────────
   - type: dropdown
     id: ame_version
     attributes:
-      label: A.M.E. Versiyonu
-      description: Hangi versiyonu kullanıyorsun?
+      label: A.M.E. Version
+      description: Which version of A.M.E. are you using?
       options:
-        - "v2.0.1 (güncel)"
+        - "v2.0.1 (latest)"
         - "v2.0.0"
         - "v1.x"
-        - "Bilmiyorum"
+        - "I don't know"
     validations:
       required: true
 
   # ─────────────────────────────────────────────
-  # 3. MC VERSİYONU
+  # 3. MINECRAFT VERSION
   # ─────────────────────────────────────────────
   - type: dropdown
     id: mc_version
     attributes:
-      label: Minecraft Versiyonu
-      description: Hangi MC sürümünde çalışıyor olacak?
+      label: Minecraft Version
+      description: For which Minecraft version should this feature work?
       options:
         - "1.21.6+ (pack_format 80-94)"
         - "1.21.2 – 1.21.5 (pack_format 48-79)"
-        - "Her ikisi de"
-        - "Belirli bir sürüm gerekmez"
+        - "Both versions"
+        - "Version independent"
     validations:
       required: true
 
   # ─────────────────────────────────────────────
-  # 4. SORUN / MOTİVASYON
+  # 4. PROBLEM / MOTIVATION
   # ─────────────────────────────────────────────
   - type: textarea
     id: problem
     attributes:
-      label: Sorun / Motivasyon
-      description: Bu özellik olmadan ne yapamıyorsun veya ne zorlaşıyor?
+      label: Problem / Motivation
+      description: What problem are you facing or what are you unable to do without this feature?
       placeholder: |
-        Örnek: macro:lib/wait ile gecikmiş bir fonksiyon çalıştırabiliyorum,
-        ama hangi tick'te ateşleneceğini önceden bilemiyorum.
+        Example: I can run delayed functions with macro:lib/wait, 
+        but I cannot know in advance on which tick it will fire.
     validations:
       required: true
 
   # ─────────────────────────────────────────────
-  # 5. ÖNERİ
+  # 5. PROPOSAL
   # ─────────────────────────────────────────────
   - type: textarea
     id: proposal
     attributes:
-      label: Öneri
+      label: Proposed Solution
       description: >
-        Nasıl çalışmasını istiyorsun?
-        Fonksiyon adı, INPUT/OUTPUT formatı ve örnek kullanım varsa yaz.
+        How should this feature work? 
+        Please include the desired function name, input/output format, and usage example if possible.
       placeholder: |
         macro:lib/wait_until
-        INPUT:  macro:input { func:"<namespace:path>", predicate:"<namespace:path>", timeout:<tick> }
-        OUTPUT: macro:output { fired:1b }  ← timeout dolmadan tetiklendiyse
 
-        # Örnek kullanım:
-        data modify storage macro:input func      set value "mypack:reward/give"
+        INPUT: macro:input { func:"<namespace:path>", predicate:"<namespace:path>", timeout:<tick> }
+        OUTPUT: macro:output { fired:1b } ← if triggered before timeout
+
+        # Example usage:
+        data modify storage macro:input func set value "mypack:reward/give"
         data modify storage macro:input predicate set value "mypack:pred/is_on_ground"
-        data modify storage macro:input timeout   set value 100
+        data modify storage macro:input timeout set value 100
         function macro:lib/wait_until with storage macro:input {}
     validations:
       required: true
 
   # ─────────────────────────────────────────────
-  # 6. MEVCUT GEÇİCİ ÇÖZÜM
+  # 6. CURRENT WORKAROUND
   # ─────────────────────────────────────────────
   - type: textarea
     id: alternatives
     attributes:
-      label: Mevcut Geçici Çözüm
-      description: Şu an bunu nasıl çözüyorsun? (isteğe bağlı)
+      label: Current Workaround (Optional)
+      description: How are you currently solving this problem?
       placeholder: |
-        Şu an macro:lib/schedule + manuel predicate check ile yapıyorum,
-        ama her senaryo için ayrı fonksiyon yazmak zorunda kalıyorum.
+        I'm currently using macro:lib/schedule + manual predicate checks, 
+        but I have to create separate functions for every scenario.
 
   # ─────────────────────────────────────────────
-  # 7. ETKİ / ÖNCELİK
+  # 7. IMPACT / PRIORITY
   # ─────────────────────────────────────────────
   - type: dropdown
     id: impact
     attributes:
-      label: Etki / Öncelik
-      description: Bu özellik seni ne kadar etkiliyor?
+      label: Impact / Priority
+      description: How important is this feature to you?
       options:
-        - "🔴 Kritik — Olmadan bir şeyi yapamıyorum"
-        - "🟠 Yüksek — Önemli bir şeyi çok zorlaştırıyor"
-        - "🟡 Orta — Güzel olurdu, ama geçici çözüm var"
-        - "🟢 Düşük — Nice-to-have"
+        - "🔴 Critical — I cannot do something without it"
+        - "🟠 High — It makes an important task much harder"
+        - "🟡 Medium — Would be nice, but I have a workaround"
+        - "🟢 Low — Nice-to-have"
     validations:
       required: true
 
   # ─────────────────────────────────────────────
   # 8. BREAKING CHANGE
   # ─────────────────────────────────────────────
-  - type: checkboxes
-    id: breaking
-    attributes:
-      label: Breaking Change
-      description: Bu öneriyi uygularken dikkat edilmesi gereken durumlar
-      options:
-        - label: Bu öneri mevcut API'yi bozabilir (input/output formatı değişebilir)
-        - label: Mevcut storage veya scoreboard yapısını etkiliyor
-        - label: Sadece 1.21.6+ için geçerli (overlay gerektirir)
-        - label: Yeni bir scoreboard objective gerektiriyor
-
-  # ─────────────────────────────────────────────
-  # 9. EK BAĞLAM
-  # ─────────────────────────────────────────────
-  - type: textarea
-    id: extra
-    attributes:
-      label: Ek Bağlam / Notlar
-      description: >
-        Referans aldığın başka bir datapack, wiki sayfası veya örnek varsa buraya ekleyebilirsin.
-        Ekran görüntüsü ya da `.mcfunction` snippet'i de kabul edilir.
+  -
