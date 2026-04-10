@@ -1,26 +1,23 @@
 name: Bug Report
-description: Bir hata veya beklenmedik davranış bildirin
+description: Report a bug or unexpected behavior
 title: "[BUG] "
 labels: [ bug ]
-
 body:
   - type: markdown
     attributes:
       value: |
-        Bildirmeden önce lütfen mevcut issue'ları kontrol edin.
-
+        Please check for existing issues before reporting.
   - type: input
     id: ame_version
     attributes:
-      label: A.M.E. Versiyonu
-      placeholder: "örn: v1.0.6-pre4"
+      label: A.M.E. Version
+      placeholder: "e.g.: v1.0.6-pre4"
     validations:
       required: true
-
   - type: dropdown
     id: mc_version
     attributes:
-      label: Minecraft Versiyonu
+      label: Minecraft Version
       options:
         - "1.21.1"
         - "1.21.2 / 1.21.3"
@@ -29,11 +26,10 @@ body:
         - "1.21.6+"
     validations:
       required: true
-
   - type: dropdown
     id: environment
     attributes:
-      label: Ortam
+      label: Environment
       options:
         - Singleplayer
         - Multiplayer (vanilla server)
@@ -41,35 +37,31 @@ body:
         - Multiplayer (Fabric)
     validations:
       required: true
-
   - type: textarea
     id: description
     attributes:
-      label: Hatanın Açıklaması
-      description: Ne oluyor? Ne olmasını bekliyordun?
+      label: Description of the Bug
+      description: What happened? What did you expect to happen?
     validations:
       required: true
-
   - type: textarea
     id: reproduction
     attributes:
-      label: Yeniden Üretme Adımları
+      label: Steps to Reproduce
       placeholder: |
-        1. `/function macro:...` çalıştır
+        1. Run `/function macro:...`
         2. ...
     validations:
       required: true
-
   - type: textarea
     id: affected_functions
     attributes:
-      label: Etkilenen Fonksiyonlar
-      description: Hangi `macro:` fonksiyon(lar)ı ile ilgili?
-      placeholder: "örn: macro:flag/toggle_system, macro:lib/tick_guard"
-
+      label: Affected Functions
+      description: Which `macro:` function(s) are affected?
+      placeholder: "e.g.: macro:flag/toggle_system, macro:lib/tick_guard"
   - type: textarea
     id: logs
     attributes:
-      label: Log / Hata Çıktısı
-      description: Oyun içi hata mesajları veya `.minecraft/logs/latest.txt` çıktısı
+      label: Logs / Error Output
+      description: In-game error messages or content from `.minecraft/logs/latest.txt`
       render: text
