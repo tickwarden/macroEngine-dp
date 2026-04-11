@@ -1,1 +1,1 @@
-function ame_load:load/all
+function ame_load:_
