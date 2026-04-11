@@ -1,6 +1,6 @@
 # ============================================================
 # macro:uuid/internal/init
-# UUID module init - hex tablosu ve sabit kurulumu
+# UUID module init — hex table and constant setup
 # Called by load/storages.mcfunction
 # ============================================================
 

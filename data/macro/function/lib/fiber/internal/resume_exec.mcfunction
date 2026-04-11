@@ -1,6 +1,6 @@
 # macro:lib/fiber/internal/resume_exec [MACRO]
 # INPUT: $(id), $(func)
-# _fib_cur'dan beslenir.
+# Fed from _fib_cur.
 
 # Is the fiber still alive?
 $execute unless data storage macro:engine fibers.$(id){alive:1b} run return 0

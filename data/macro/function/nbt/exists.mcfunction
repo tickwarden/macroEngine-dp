@@ -4,9 +4,9 @@
 #
 # INPUT (storage macro:input):
 # storage → storage namespace
-# path → kontrol edilecek path
+# path → path to check
 #
-# OUTPUT: macro:output result → 1b (var) veya 0b (yok)
+# OUTPUT: macro:output result → 1b (exists) or 0b (not found)
 # ─────────────────────────────────────────────────────────────────
 
 function macro:nbt/internal/exists_exec with storage macro:input {}

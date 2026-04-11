@@ -1,7 +1,7 @@
 # ─────────────────────────────────────────────────────────────────
 # macro:wand/give
 # Gives the player a carrot_on_a_stick marked as a wand.
-# Item otomatik olarak custom_data ile etiketlenir.
+# The item is automatically tagged with custom_data.
 #
 # INPUT:
 #   $(player) → target player
