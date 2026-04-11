@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - name: Checkout repository (full history)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -54,7 +54,7 @@ jobs:
           ls -lh ${BACKUP_NAME}*
 
       - name: Upload backup artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: repository-backup-${{ github.run_number }}
           path: |
