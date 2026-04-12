@@ -2,6 +2,36 @@
 
 ---
 
+## v3.0.4-pre1 — 2026-04-12
+
+### ✨ Yeni
+
+#### `macro:lib/string/*` — StringLib Entegrasyonu
+
+[StringLib (CMDred, MIT)](https://github.com/CMDred/StringLib) bağımlılık olarak bundle'landı. `data/stringlib/` namespace ve Lantern Load altyapısı doğrudan pake eklendi.
+
+AME namespace'inden erişim için `macro:lib/string/` wrapper API'si eklendi:
+
+| Fonksiyon | Input alanları | Output |
+|---|---|---|
+| `lib/string/concat` | `list` | `string.result` |
+| `lib/string/find` | `string`, `find`, `n` | `string.result` (index listesi) |
+| `lib/string/replace` | `string`, `find`, `replace`, `n` | `string.result` |
+| `lib/string/split` | `string`, `separator`, `n`, `keep_empty` | `string.result` |
+| `lib/string/insert` | `string`, `insertion`, `index` | `string.result` |
+| `lib/string/to_lowercase` | `string` | `string.result` (A-Z) |
+| `lib/string/to_lowercase_full` | `string` | `string.result` (tam Unicode) |
+| `lib/string/to_uppercase` | `string` | `string.result` (a-z) |
+| `lib/string/to_uppercase_full` | `string` | `string.result` (tam Unicode) |
+| `lib/string/to_number` | `string` | `string.result` |
+| `lib/string/to_string` | `value` | `string.result` |
+
+Tüm fonksiyonlar `macro:input` → `stringlib:input` → `stringlib:output` → `macro:output string.result` bridge pattern'ini kullanır. StringLib'in `$(macro)` variable beklediği fonksiyonlar için `lib/string/internal/*_dispatch` köprü dosyaları eklendi.
+
+Load sırasında `#StringLib.Init` kontrolü yapılır; eksikse `macro.debug` tag'li oyunculara uyarı gösterilir.
+
+---
+
 ## v3.0.3 — 2026-04-11
 
 ### ✨ Yeni

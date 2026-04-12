@@ -4,7 +4,7 @@
 # Note:   Prefer 'data modify ... set string storage ...' when possible (cheaper)
 # Dep:    StringLib (CMDred)
 data modify storage macro:engine _str_bridge.Input set from storage macro:input value
-function macro:lib/string/internal/to_string_dispatch with storage macro:engine _str_bridge
+function macro:lib/string/internal/to_string_dispatch with storage macro:engine _str_bridge {}
 data modify storage macro:output string.result set from storage stringlib:output to_string
 data remove storage stringlib:output to_string
 data remove storage macro:engine _str_bridge

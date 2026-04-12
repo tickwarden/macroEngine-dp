@@ -4,7 +4,7 @@
 # Output: macro:output string.result — lowercase string
 # Dep:    StringLib (CMDred)
 data modify storage macro:engine _str_bridge.String set from storage macro:input string
-function macro:lib/string/internal/to_lower_fast_dispatch with storage macro:engine _str_bridge
+function macro:lib/string/internal/to_lower_fast_dispatch with storage macro:engine _str_bridge {}
 data modify storage macro:output string.result set from storage stringlib:output to_lowercase
 data remove storage stringlib:output to_lowercase
 data remove storage macro:engine _str_bridge

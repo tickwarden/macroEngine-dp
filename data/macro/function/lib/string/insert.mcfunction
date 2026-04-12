@@ -7,7 +7,7 @@
 data modify storage stringlib:input insert.String set from storage macro:input string
 data modify storage stringlib:input insert.Insertion set from storage macro:input insertion
 data modify storage macro:engine _str_bridge.Index set from storage macro:input index
-function macro:lib/string/internal/insert_dispatch with storage macro:engine _str_bridge
+function macro:lib/string/internal/insert_dispatch with storage macro:engine _str_bridge {}
 data modify storage macro:output string.result set from storage stringlib:output insert
 data remove storage stringlib:input insert
 data remove storage stringlib:output insert
