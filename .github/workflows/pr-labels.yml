@@ -16,7 +16,7 @@ jobs:
       pull-requests: write
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -40,8 +40,8 @@ jobs:
           }
 
           while IFS= read -r file; do
-            # Changelog güncellendiyse işaretle
-            [ "$file" = "docs/CHANGELOG.md" ] && has_changelog=1 && add_label "changelog"
+            # Changelog
+            [ "$file" = "docs/CHANGELOG.md" ] && add_label "changelog"
 
             # Overlay klasörleri
             case "$file" in
@@ -54,10 +54,16 @@ jobs:
               26_1/*)          add_label "overlay" ;;
             esac
 
-            # .mcfunction dosyaları (tüm klasörler, bash case ** çalışmaz → grep kullan)
+            # .mcfunction dosyaları
             if echo "$file" | grep -qE '\.mcfunction$'; then
               add_label "mcfunction"
             fi
+
+            # Bundled bağımlılıklar (data/<dep_namespace>/*)
+            case "$file" in
+              data/stringlib/*) add_label "dependency" ;;
+              data/load/*)      add_label "dependency" ;;
+            esac
 
             # Data dosyaları
             case "$file" in
@@ -84,7 +90,7 @@ jobs:
 
           done <<< "$changed"
 
-          LABELS=$(echo "$LABELS" | xargs)  # trim whitespace
+          LABELS=$(echo "$LABELS" | xargs)
 
           if [ -z "$LABELS" ]; then
             echo "No matching labels to apply."
@@ -93,7 +99,6 @@ jobs:
 
           echo "Applying labels: $LABELS"
 
-          # Ensure labels exist, create if missing
           for label in $LABELS; do
             case "$label" in
               mcfunction)    color="0075ca"; desc="Changes to .mcfunction files" ;;
@@ -108,12 +113,12 @@ jobs:
               damage-type)   color="f9d0c4"; desc="Damage type changes" ;;
               item-modifier) color="fef2c0"; desc="Item modifier changes" ;;
               tags)          color="e6e6e6"; desc="Tag file changes" ;;
+              dependency)    color="a2eeef"; desc="Bundled dependency changes" ;;
               *)             color="ededed"; desc="" ;;
             esac
             gh label create "$label" --color "$color" --description "$desc" --force 2>/dev/null || true
           done
 
-          # Apply labels to PR
           label_args=""
           for label in $LABELS; do
             label_args="$label_args --add-label $label"
