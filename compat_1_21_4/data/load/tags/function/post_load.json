@@ -1,3 +1,5 @@
 {
-    "values": []
+    "values": [
+        "ame_load:load/post_load"
+    ]
 }
