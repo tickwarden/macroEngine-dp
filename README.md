@@ -110,10 +110,10 @@ Code and examples are split into separate documents by module:
 | Module | Document |
 |--------|----------|
 | 🕐 Cooldown | [cooldown.md](docs/cooldown.md) |
-| 📡 Event | [event.md](docs/event.md) |
-| 🔢 Math | [math.md](docs/math.md) |
-| 👥 Team & ⚙️ Config | [team-config.md](docs/team-config.md) |
-| 🔁 Lib · 👤 Player · ⚙️ Commands · 💬 Messaging · Dialog | [docs/lib-player-cmd-string.md](lib-player-cmd-string.md) |
+| 📡 Event | [event.md](https://github.com/tickwarden/macroEngine-datapack/blob/main/docs/event.md) |
+| 🔢 Math | [math.md](https://github.com/tickwarden/macroEngine-datapack/blob/main/docs/math.md) |
+| 👥 Team & ⚙️ Config | [team-config.md](https://github.com/tickwarden/macroEngine-datapack/blob/main/docs/team-config.md) |
+| 🔁 Lib · 👤 Player · ⚙️ Commands · 💬 Messaging · Dialog · Other | [docs/lib-player-cmd-string.md](https://github.com/tickwarden/macroEngine-datapack/blob/main/docs/lib-player-cmd-string.md) |
 
 ---
 
