@@ -1,6 +1,6 @@
 # 🔁 Library · 👤 Player · ⚙️ Commands · 💬 Messaging & Dialog System
 
-← [Back to README](docs/README.md)
+← [Back to README](https://github.com/tickwarden/macroEngine-datapack/blob/main/README.md)
 
 ---
 
