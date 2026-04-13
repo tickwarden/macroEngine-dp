@@ -24,6 +24,6 @@
 # CANCELLING:  /function ame_load:load/no
 # AUTO-CANCEL: fires after 5 minutes if no response
 
-summon minecraft:marker ~ ~ ~ {Tags:["macro.stage0"],CustomName:'{"text":"AME"}'}
+summon minecraft:marker ~ ~ ~ {Tags:["macro.stage0"],CustomName:{"text":"AME"}}
 execute as @e[type=minecraft:marker,tag=macro.stage0,limit=1] run function ame_load:load/confirm
 execute as @e[type=minecraft:marker,tag=macro.stage0,limit=1] run kill @s
