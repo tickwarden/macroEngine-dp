@@ -1,12 +1,10 @@
 #!/usr/bin/env bash
 # =============================================================================
-# AME mcfunction Linter - Esnek ve Stabil Versiyon
+# AME mcfunction Linter - Stabil & Esnek Versiyon
 # =============================================================================
 set -euo pipefail
 
-# ─────────────────────────────────────────────
 # Renk tanımları
-# ─────────────────────────────────────────────
 RED='\033[0;31m'
 YELLOW='\033[0;33m'
 GREEN='\033[0;32m'
@@ -14,9 +12,7 @@ CYAN='\033[0;36m'
 BOLD='\033[1m'
 RESET='\033[0m'
 
-# ─────────────────────────────────────────────
 # Overlay dizinleri
-# ─────────────────────────────────────────────
 MC_DIRS=(
   data
   _pre_1_21_4
@@ -27,16 +23,12 @@ MC_DIRS=(
   1_21_6
 )
 
-# ─────────────────────────────────────────────
 # Sayaçlar
-# ─────────────────────────────────────────────
 TOTAL_ERRORS=0
 TOTAL_WARNS=0
 TOTAL_PASSED=0
 
-# ─────────────────────────────────────────────
 # Yardımcı fonksiyonlar
-# ─────────────────────────────────────────────
 find_mcfunction() {
   find "${MC_DIRS[@]}" -name "*.mcfunction" -print0 2>/dev/null
 }
@@ -71,9 +63,7 @@ detail() {
   echo -e " ${YELLOW}→${RESET} $1"
 }
 
-# ─────────────────────────────────────────────
-# 1. CRLF Kontrolü
-# ─────────────────────────────────────────────
+# 1. CRLF
 check_crlf() {
   print_header "1. CRLF Line Ending Check"
   local found=0
@@ -87,63 +77,51 @@ check_crlf() {
   [ $found -eq 0 ] && pass "No CRLF line endings found."
 }
 
-# ─────────────────────────────────────────────
-# 2. Macro Line Prefix Check (En stabil hali)
-# ─────────────────────────────────────────────
+# 2. Macro Line Prefix (Stabil)
 check_macro_prefix() {
   print_header "2. Macro Line Prefix Check"
   local found=0
-
   while IFS= read -r -d '' f; do
     [[ -z "$f" ]] && continue
-
-    # Bulunan hatalı satırları topla
-    mapfile -t bad_lines < <(grep -nP '\$\([a-zA-Z_]\w*\)' "$f" 2>/dev/null)
-
-    for lineinfo in "${bad_lines[@]}"; do
-      local lineno="${lineinfo%%:*}"
-      local linecontent="${lineinfo#*:}"
-
-      # Yorumları temizle
-      local code="${linecontent%%#*}"
-      local stripped="${code#"${code%%[![:space:]]*}"}"
-
+    mapfile -t bad < <(grep -nP '\$\([a-zA-Z_]\w*\)' "$f" 2>/dev/null)
+    for lineinfo in "${bad[@]}"; do
+      local lineno=${lineinfo%%:*}
+      local content=${lineinfo#*:}
+      local code=${content%%#*}
+      local stripped=${code#"${code%%[![:space:]]*}"}
       [[ -z "$stripped" ]] && continue
-
-      if ! echo "$linecontent" | grep -qP '^\s*\$'; then
+      if ! echo "$content" | grep -qP '^\s*\$'; then
         fail "[macro-prefix] $f:$lineno"
-        detail "$linecontent"
+        detail "$content"
         found=$((found + 1))
       fi
     done
   done < <(find_mcfunction)
-
-  if [ $found -eq 0 ]; then
-    pass "All macro variables are on lines starting with \$"
-  else
-    detail "$found macro prefix error(s) found."
-  fi
+  [ $found -eq 0 ] && pass "All macro variables are on lines starting with \$" || detail "$found error(s)"
 }
 
-# ─────────────────────────────────────────────
-# Diğer check'ler (hepsi -print0 ve daha güvenli hale getirildi)
-# ─────────────────────────────────────────────
+# 3. Useless Dollar Prefix (DÜZELTİLDİ)
 check_useless_dollar() {
   print_header "3. Useless Dollar Prefix Check"
   local found=0
   while IFS= read -r -d '' f; do
-    grep -nP '^\s*\$' "$f" 2>/dev/null | while IFS=: read -r lineno line; do
+    [[ -z "$f" ]] && continue
+    mapfile -t lines < <(grep -nP '^\s*\$' "$f" 2>/dev/null)
+    for lineinfo in "${lines[@]}"; do
+      local lineno=${lineinfo%%:*}
+      local line=${lineinfo#*:}
       local stripped="${line#"${line%%[![:space:]]*}"}"
       if [[ "$stripped" == \$* ]] && ! echo "$stripped" | grep -qP '\$\([a-zA-Z_]\w*\)'; then
         warn "[useless-\$] $f:$lineno"
-        detail "${line}"
+        detail "$line"
         found=$((found + 1))
       fi
     done
   done < <(find_mcfunction)
-  [ $found -eq 0 ] && pass "No useless dollar prefixes found."
+  [ $found -eq 0 ] && pass "No useless dollar prefixes found." || detail "$found useless \$ found."
 }
 
+# 4. INPUT Comment
 check_input_comment() {
   print_header "4. INPUT Comment Coverage"
   local found=0
@@ -156,13 +134,15 @@ check_input_comment() {
   [ $found -eq 0 ] && pass "All macro files have INPUT comments." || detail "$found file(s) missing INPUT comment."
 }
 
-# (Diğer fonksiyonları da aynı mantıkla güncelledim - yer tasarrufu için hepsini kısalttım)
-
+# 5. @p Selector
 check_at_p() {
   print_header "5. @p Selector Check"
   local found=0
   while IFS= read -r -d '' f; do
-    grep -nP '@p\b' "$f" 2>/dev/null | while IFS=: read -r lineno line; do
+    mapfile -t bad < <(grep -nP '@p\b' "$f" 2>/dev/null)
+    for lineinfo in "${bad[@]}"; do
+      local lineno=${lineinfo%%:*}
+      local line=${lineinfo#*:}
       warn "[@p] $f:$lineno"
       detail "$line"
       found=$((found + 1))
@@ -171,6 +151,7 @@ check_at_p() {
   [ $found -eq 0 ] && pass "No @p usage found." || detail "Prefer: @a[name=\$(player),limit=1]"
 }
 
+# 6. Trailing Whitespace
 check_trailing_whitespace() {
   print_header "6. Trailing Whitespace Check"
   local found=0
@@ -184,6 +165,7 @@ check_trailing_whitespace() {
   [ $found -eq 0 ] && pass "No trailing whitespace found." || detail "$found total trailing whitespace line(s)."
 }
 
+# 7. JSON Validation
 check_json() {
   print_header "7. JSON Validation"
   local found=0
@@ -196,14 +178,123 @@ check_json() {
   [ $found -eq 0 ] && pass "All JSON files are valid."
 }
 
-# ... (geri kalan check'leri de aynı şekilde -print0 ile güncelledim)
+# 8-14 arası check'ler (kısaltılmış ama stabil)
+check_deprecated_text() {
+  print_header "8. Deprecated Text Component Keys"
+  local found=0
+  while IFS= read -r -d '' f; do
+    mapfile -t bad < <(grep -nP '"(clickEvent|hoverEvent)"' "$f" 2>/dev/null)
+    for lineinfo in "${bad[@]}"; do
+      warn "[deprecated-key] $f:${lineinfo%%:*}"
+      detail "${lineinfo#*:}"
+      found=$((found + 1))
+    done
+  done < <(find_mcfunction)
+  [ $found -eq 0 ] && pass "No deprecated text component keys." || detail "Use click_event / hover_event"
+}
+
+check_hardcoded_names() {
+  print_header "9. Hardcoded Player Names"
+  local found=0
+  while IFS= read -r -d '' f; do
+    if grep -qP '@[aeprs]\[.*name=[^$\s(]' "$f"; then
+      warn "[hardcoded-name] $f"
+      grep -nP '@[aeprs]\[.*name=[^$\s(]' "$f" | while IFS= read -r m; do detail "$m"; done
+      found=1
+    fi
+  done < <(find_mcfunction)
+  [ $found -eq 0 ] && pass "No hardcoded player names."
+}
+
+check_function_path() {
+  print_header "10. Function Path & Namespace Check"
+  local found=0
+  while IFS= read -r -d '' f; do
+    mapfile -t bad < <(grep -nP '^\$?function\s+' "$f" 2>/dev/null)
+    for lineinfo in "${bad[@]}"; do
+      local lineno=${lineinfo%%:*}
+      local line=${lineinfo#*:}
+      if ! echo "$line" | grep -qP '^\$?function\s+(#|[a-z0-9_\-]+:[a-z0-9_/\-]+)'; then
+        warn "[function-path] $f:$lineno"
+        detail "$line"
+        found=$((found + 1))
+      fi
+    done
+  done < <(find_mcfunction)
+  [ $found -eq 0 ] && pass "All function calls have correct namespace."
+}
+
+check_function_length() {
+  print_header "11. Function Length Check"
+  local found=0
+  while IFS= read -r -d '' f; do
+    local lines=$(wc -l < "$f")
+    if [ "$lines" -gt 150 ]; then
+      warn "[long-function] $f ($lines lines)"
+      detail "Consider splitting into sub-functions."
+      found=$((found + 1))
+    fi
+  done < <(find_mcfunction)
+  [ $found -eq 0 ] && pass "No excessively long functions."
+}
+
+check_load_tick() {
+  print_header "12. load.json & tick.json Check"
+  local load=0 tick=0
+  [[ -f "data/minecraft/tags/function/load.json" || -f "data/minecraft/tags/functions/load.json" ]] && load=1
+  [[ -f "data/minecraft/tags/function/tick.json" || -f "data/minecraft/tags/functions/tick.json" ]] && tick=1
+  [ $load -eq 1 ] && pass "load.json exists." || warn "[missing-tag] load.json not found!"
+  [ $tick -eq 1 ] && pass "tick.json exists." || warn "[missing-tag] tick.json not found!"
+}
+
+check_dangerous_commands() {
+  print_header "13. Dangerous Commands Check"
+  local found=0
+  while IFS= read -r -d '' f; do
+    mapfile -t bad < <(grep -nP '\bkill @e(?!\[)|\bfill\b.*\bair\b|\bparticle\b.*\s[0-9]{4,}\s' "$f" 2>/dev/null)
+    for lineinfo in "${bad[@]}"; do
+      warn "[dangerous-cmd] $f:${lineinfo%%:*}"
+      detail "${lineinfo#*:}"
+      found=$((found + 1))
+    done
+  done < <(find_mcfunction)
+  [ $found -eq 0 ] && pass "No dangerous commands found."
+}
+
+check_unreachable_code() {
+  print_header "14. Unreachable Code After Return"
+  local found=0
+  while IFS= read -r -d '' f; do
+    python3 - "$f" <<'PYEOF' || rc=$?
+import sys
+path = sys.argv[1]
+lines = open(path).readlines()
+found = 0
+for i, line in enumerate(lines):
+    s = line.strip()
+    if not s or s.startswith('#'): continue
+    if s.startswith('return ') and not s.startswith('return run'):
+        for j in range(i+1, len(lines)):
+            nxt = lines[j].strip()
+            if nxt and not nxt.startswith('#'):
+                print(f" \033[33m⚠ WARN:\033[0m [unreachable] {path}:{j+1}")
+                print(f" \033[33m→\033[0m {lines[j].rstrip()}")
+                found += 1
+                break
+sys.exit(found)
+PYEOF
+    rc=${rc:-$?}
+    found=$((found + rc))
+  done < <(find_mcfunction)
+  [ $found -eq 0 ] && pass "No unreachable code found."
+}
 
 check_overlay_dirs() {
   print_header "15. Overlay Directory Check"
   local missing=0
   for dir in "${MC_DIRS[@]}"; do
     if [ ! -d "$dir" ]; then
-      warn "[missing-dir] '$dir' not found — remove from MC_DIRS?"
+      warn "[missing-dir] '$dir' not found"
       missing=$((missing + 1))
     else
       pass "Directory exists: $dir"
@@ -227,7 +318,7 @@ print_summary() {
     echo -e "${RED}${BOLD}FAILED — ${TOTAL_ERRORS} error(s) must be fixed.${RESET}"
     exit 1
   elif [ $TOTAL_WARNS -gt 0 ]; then
-    echo -e "${YELLOW}${BOLD}PASSED WITH WARNINGS — ${TOTAL_WARNS} warning(s).${RESET}"
+    echo -e "${YELLOW}${BOLD}PASSED WITH WARNINGS.${RESET}"
     exit 0
   else
     echo -e "${GREEN}${BOLD}ALL CHECKS PASSED.${RESET}"
@@ -235,11 +326,8 @@ print_summary() {
   fi
 }
 
-# ─────────────────────────────────────────────
-# Ana fonksiyon
-# ─────────────────────────────────────────────
 main() {
-  echo -e "${BOLD}${CYAN} AME mcfunction Linter (Stabil Versiyon)${RESET}"
+  echo -e "${BOLD}${CYAN} AME mcfunction Linter (Stabil v2)${RESET}"
   echo -e "${CYAN} $(date '+%Y-%m-%d %H:%M:%S')${RESET}"
 
   check_overlay_dirs
