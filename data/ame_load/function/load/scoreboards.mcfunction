@@ -66,3 +66,7 @@ scoreboard objectives add macro.hook_fish dummy
 # Version calculation constants (for Lantern Load integration)
 scoreboard players set #10000 macro.tmp 10000
 scoreboard players set #100 macro.tmp 100
+
+# JSON module — return code and type tracking
+scoreboard objectives add macro.json.rc dummy
+scoreboard objectives add macro.json.type dummy

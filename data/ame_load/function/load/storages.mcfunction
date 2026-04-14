@@ -83,3 +83,7 @@ data modify storage macro:engine batches set value {}
 
 # Wand cooldown module — separate storage (avoids collision with macro:cooldown)
 execute unless data storage macro:engine wand_cooldowns run data modify storage macro:engine wand_cooldowns set value {}
+
+# JSON module init — dedicated storage namespace
+execute unless data storage macro:json objects run data modify storage macro:json objects set value {}
+execute unless data storage macro:json meta run data modify storage macro:json meta set value {}
