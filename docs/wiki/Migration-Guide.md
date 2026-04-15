@@ -66,11 +66,11 @@ To skip the gate for automated testing, call `ame_load:load/yes` from a schedule
 
 ---
 
-## Migrating from `v2.x` → `v3.0.0`
+## Migrating from `v2.x` → `v4.0.0`
 
 ### `rate_limit` module breaking change
 
-The `rate_limit` module was completely rewritten in v3.0.0:
+The `rate_limit` module was completely rewritten in v4.0.0:
 
 - Old sub-function-based API removed
 - New API: `check` / `tick` / `config` — pure scoreboard, no sub-functions

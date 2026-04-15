@@ -44,11 +44,11 @@ Full detailed changelog: [docs/CHANGELOG.md](https://github.com/tickwarden/macro
 ## v3.0.1 — 2026-04-09
 
 **New:** `time/get_time`, `time/time_phase`, `hook/reset_all`.  
-**Fix:** Version string mismatch in all overlays (v3.0.0 → v3.0.1).
+**Fix:** Version string mismatch in all overlays (v4.0.0 → v3.0.1).
 
 ---
 
-## v3.0.0 — 2026-04-04
+## v4.0.0 — 2026-04-04
 
 **Breaking:** `rate_limit` module fully rewritten — sub-function API removed. New `check` / `tick` / `config` pure-scoreboard API.
 
