@@ -4,6 +4,10 @@
 
 > Current version: **v4.0.0**
 
+> 📦 **Moved from `ToolkitMC/macroEngine-dp`** — This is the new official repository. The old repo is archived (read-only). Update your remotes and bookmarks. See the [Migration Guide](docs/wiki/Migration-Guide.md) for details.
+
+> 📚 **Wiki** — Full API reference, examples, and guides: [docs/wiki/](docs/wiki/) *(GitHub Wiki coming soon)*
+
 ---
 
 ## ✅ Verification
