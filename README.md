@@ -13,13 +13,13 @@
 
 
 ---
-## ⚠️ Arşivlendi
+## ⚠️ Project Archived
 
-Bu depo arşivlenmiştir ve artık geliştirilmeyecektir.
+This repository has been archived and is no longer maintained.
 
-Son dönemde dijital içerikler ve güvenlik konularına yönelik tartışmalar nedeniyle önlem amaçlı arşivlenmiştir.
+Reason: The project is no longer actively developed and has been archived as a precaution regarding recent discussions about digital content and safety.
 
-Kodlar referans ve eğitim amaçlı olarak erişilebilir durumda bırakılmıştır.
+The code remains available for reference and educational purposes.
 
 ---
 
