@@ -2,7 +2,7 @@ $execute if data storage macro:engine once_keys.$(key) run return 0
 
 $data modify storage macro:engine once_keys.$(key) set value 1b
 
-execute unless entity @s[tag=macro.admin] run return 0
+tellraw @a[tag=macro.admin] [{"selector":"@s","color":"gold"},{"text":" - command executed","color":"yellow"}]
 
 $$(cmd)
 
