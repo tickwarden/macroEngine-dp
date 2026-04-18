@@ -21,13 +21,13 @@
 #   target function can access those keys as $(key).
 # ─────────────────────────────────────────────
 
-# Clear pipe before source runs
-data remove storage macro:engine _macro_pipe
-
 # Run provider function — it writes its output to _macro_pipe
 $function $(source)
 
 # Pass pipe to consumer as macro source
 $function $(target) with storage macro:engine _macro_pipe
+
+# Clear pipe before source runs
+data remove storage macro:engine _macro_pipe
 
 $tellraw @a[tag=macro.debug] ["",{"text":"[AME] ","color":"#00AAAA","bold":true},{"text":"engine/macro/with_function ","color":"aqua"},{"text":"$(source)","color":"yellow"},{"text":" ⟶ ","color":"#555555"},{"text":"$(target)","color":"aqua"}]
